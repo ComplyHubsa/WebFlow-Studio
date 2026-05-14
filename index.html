@@ -854,10 +854,36 @@ footer a { color: #555; text-decoration: none; }
       if (!oth) ok = false;
     }
 
-    if (ok) {
+    if (!ok) return;
+
+    const btn = document.querySelector('.form-submit-btn');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    const payload = {
+      name: document.getElementById('fname').value.trim(),
+      phone: phone,
+      business: document.getElementById('business').value.trim(),
+      industry: ind === 'Other Business' ? document.getElementById('other-business').value.trim() : ind,
+      hasWebsite: document.getElementById('has-website').value === 'yes' ? 'Yes' : 'No',
+      websiteUrl: document.getElementById('website-url') ? document.getElementById('website-url').value.trim() : '',
+      extraInfo: document.getElementById('extra-info') ? document.getElementById('extra-info').value.trim() : ''
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycbwVcdMfRGO7TDeVBbXcTNxklno34B3UMoxAO6RACp_jzCpMDAMlhtVfyxnQf0EuHVI/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
       document.getElementById('form-content').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
-    }
+    })
+    .catch(() => {
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    });
   }
 </script>
 </body>
