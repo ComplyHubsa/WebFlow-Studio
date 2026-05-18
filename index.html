@@ -10,7 +10,7 @@
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-  --orange: #E8440A;
+  --orange: #1A6FE8;
   --black: #0D0D0D;
   --off-white: #F2F0EA;
   --mid-grey: #888;
@@ -122,34 +122,34 @@ section { padding: 100px 40px; }
    Layout: Full-bleed magazine cover. Centered text. Large serif italic hero word.
    Horizontal rule dividers. Pastel cream + deep plum. Portrait orientation feel. ══ */
 .wc-beauty {
-  min-height: 480px; background: #1C0A18;
+  min-height: 480px; background: #060E1A;
   display: grid; grid-template-rows: auto 1fr auto;
   position: relative; overflow: hidden;
 }
-.wc-beauty-top-stripe { background: #E8C5DC; height: 4px; }
+.wc-beauty-top-stripe { background: #C5D8F0; height: 4px; }
 .wc-beauty::after {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 100% 80% at 50% 0%, #5C1A4A 0%, transparent 60%);
+  background: radial-gradient(ellipse 100% 80% at 50% 0%, #0D3A7A 0%, transparent 60%);
 }
 .wc-beauty-nav {
   position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between;
   padding: 16px 28px;
 }
-.wc-beauty-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 19px; color: #F0D4E8; letter-spacing: 1px; }
+.wc-beauty-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 19px; color: #C8DCF5; letter-spacing: 1px; }
 .wc-beauty-nav-right { display: flex; align-items: center; gap: 18px; }
 .wc-beauty-nav-links { display: flex; gap: 16px; }
 .wc-beauty-nav-links span { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.2); }
-.wc-beauty-cta { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: #E8C5DC; color: #1C0A18; padding: 5px 12px; border-radius: 1px; }
+.wc-beauty-cta { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: #C5D8F0; color: #060E1A; padding: 5px 12px; border-radius: 1px; }
 .wc-beauty-center {
   position: relative; z-index: 3;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 20px 28px;
 }
-.wc-beauty-issue { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: #E8C5DC80; margin-bottom: 20px; }
-.wc-beauty-divider { width: 60px; height: 1px; background: #E8C5DC30; margin: 0 auto 20px; }
+.wc-beauty-issue { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: #C5D8F080; margin-bottom: 20px; }
+.wc-beauty-divider { width: 60px; height: 1px; background: #C5D8F030; margin: 0 auto 20px; }
 .wc-beauty-hero-word {
   font-family: 'Playfair Display', serif; font-style: italic; font-weight: 900;
-  font-size: clamp(64px, 8vw, 96px); color: #F0D4E8; line-height: 0.9; margin-bottom: 16px;
+  font-size: clamp(64px, 8vw, 96px); color: #C8DCF5; line-height: 0.9; margin-bottom: 16px;
   letter-spacing: -1px;
 }
 .wc-beauty-subword {
@@ -164,8 +164,8 @@ section { padding: 100px 40px; }
 }
 .wc-beauty-bottom p { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.15); }
 .wc-beauty-dot-row { display: flex; gap: 5px; align-items: center; }
-.wc-beauty-dot-row span { width: 5px; height: 5px; border-radius: 50%; background: #E8C5DC30; }
-.wc-beauty-dot-row span.active { background: #E8C5DC; }
+.wc-beauty-dot-row span { width: 5px; height: 5px; border-radius: 50%; background: #C5D8F030; }
+.wc-beauty-dot-row span.active { background: #C5D8F0; }
 
 /* ══ CARD 2: BRASA Restaurant
    Layout: Bold horizontal bands. Menu-board style. Big number feature. Side accent bar. ══ */
@@ -174,7 +174,7 @@ section { padding: 100px 40px; }
   display: flex; flex-direction: row; position: relative; overflow: hidden;
 }
 .wc-restaurant-side {
-  width: 56px; background: #B5400A; flex-shrink: 0;
+  width: 56px; background: #1A5FCC; flex-shrink: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
 }
 .wc-restaurant-side-text {
@@ -201,14 +201,14 @@ section { padding: 100px 40px; }
 .wc-restaurant-band {
   border-bottom: 1.5px solid #0D0D0D20; padding-bottom: 16px; margin-bottom: 16px;
 }
-.wc-restaurant-band-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #B5400A; margin-bottom: 6px; }
+.wc-restaurant-band-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #1A5FCC; margin-bottom: 6px; }
 .wc-restaurant-big-title {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
   font-size: clamp(52px, 6vw, 74px); line-height: 0.85; text-transform: uppercase;
   letter-spacing: -2px; color: #0D0D0D;
 }
 .wc-restaurant-big-title .stroke-r { -webkit-text-stroke: 1.5px #0D0D0D; color: transparent; }
-.wc-restaurant-big-title .red { color: #B5400A; }
+.wc-restaurant-big-title .red { color: #1A5FCC; }
 .wc-restaurant-row { display: flex; gap: 16px; margin-top: 4px; }
 .wc-restaurant-meta-col { flex: 1; }
 .wc-restaurant-meta-col .lbl { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #0D0D0D40; margin-bottom: 3px; }
@@ -218,7 +218,7 @@ section { padding: 100px 40px; }
   padding: 14px 22px; background: #0D0D0D;
 }
 .wc-restaurant-footer p { font-size: 10px; letter-spacing: 1px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
-.wc-restaurant-footer-cta { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #B5400A; }
+.wc-restaurant-footer-cta { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #1A5FCC; }
 
 /* ══ CARD 3: 4WAYSCON Construction
    Layout: Full dark. Giant number watermark. Horizontal stat bar at top. Clean left-aligned. ══ */
@@ -311,7 +311,7 @@ section { padding: 100px 40px; }
 /* PRICING */
 .pricing { background: var(--black); color: var(--white); }
 .pricing .section-h2 { color: var(--white); }
-.pricing-grid { margin-top: 56px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start; }
+.pricing-grid { margin-top: 56px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 24px; align-items: start; }
 .pricing-card { border: 1.5px solid #2a2a2a; border-radius: 16px; overflow: hidden; }
 .pricing-card.featured { border-color: var(--orange); }
 .pricing-top { padding: 40px; background: #111; }
@@ -332,7 +332,7 @@ section { padding: 100px 40px; }
   font-weight: 700; font-size: 16px; border: none; cursor: pointer;
   transition: background 0.2s, transform 0.15s; text-align: center; display: block; text-decoration: none;
 }
-.btn-orange:hover { background: #c93a08; transform: translateY(-1px); }
+.btn-orange:hover { background: #1558B0; transform: translateY(-1px); }
 .btn-outline-orange {
   background: transparent; color: var(--orange); padding: 14px 32px; border-radius: 30px; width: 100%;
   font-weight: 700; font-size: 15px; border: 1.5px solid var(--orange); cursor: pointer;
@@ -375,7 +375,7 @@ section { padding: 100px 40px; }
   margin-top: 8px; transition: background 0.2s, transform 0.15s;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.form-submit-btn:hover { background: #c93a08; transform: translateY(-1px); }
+.form-submit-btn:hover { background: #1558B0; transform: translateY(-1px); }
 .form-success { display: none; text-align: center; padding: 40px 20px; }
 .form-success .success-icon { font-size: 48px; margin-bottom: 16px; }
 .form-success h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 28px; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
@@ -452,14 +452,16 @@ footer a { color: #555; text-decoration: none; }
       <span>Salons</span><span class="dot">◆</span>
       <span>Retail</span><span class="dot">◆</span>
       <span>Construction</span><span class="dot">◆</span>
-      <span>Johannesburg</span><span class="dot">◆</span>
-      <span>Sandton</span><span class="dot">◆</span>
-      <span>Cape Town</span><span class="dot">◆</span>
-      <span>Durban</span><span class="dot">◆</span>
-      <span>Pretoria</span><span class="dot">◆</span>
       <span>Accounting</span><span class="dot">◆</span>
       <span>Healthcare</span><span class="dot">◆</span>
       <span>Security</span><span class="dot">◆</span>
+      <span>Landscaping</span><span class="dot">◆</span>
+      <span>Photography</span><span class="dot">◆</span>
+      <span>Transport</span><span class="dot">◆</span>
+      <span>Cleaning</span><span class="dot">◆</span>
+      <span>Automotive</span><span class="dot">◆</span>
+      <span>Events</span><span class="dot">◆</span>
+      <span>Education</span><span class="dot">◆</span>
     </div>
   </div>
 </div>
@@ -644,7 +646,7 @@ footer a { color: #555; text-decoration: none; }
 
 <section class="pricing" id="pricing">
   <div class="section-label" style="color: var(--orange);">Pricing</div>
-  <h2 class="section-h2">TWO PACKAGES.<br><span class="orange">NO SURPRISES.</span></h2>
+  <h2 class="section-h2">THREE PACKAGES.<br><span class="orange">NO SURPRISES.</span></h2>
   <div class="pricing-grid">
 
     <!-- PACKAGE 1: Full Website -->
@@ -665,7 +667,7 @@ footer a { color: #555; text-decoration: none; }
           <li>Contact form included</li>
           <li>
             1 round of revisions included
-            <span class="note">After delivery, you can ask for one set of changes — things like wording tweaks, colour adjustments or moving sections around. We fix it all in one go at no extra charge.</span>
+            <span class="note">After delivery, you can request one set of changes at no extra charge.</span>
           </li>
         </ul>
       </div>
@@ -675,15 +677,37 @@ footer a { color: #555; text-decoration: none; }
       </div>
     </div>
 
-    <!-- PACKAGE 2: Quick Fix -->
+    <!-- PACKAGE 2: Full Build + Maintenance -->
+    <div class="pricing-card featured">
+      <div class="pricing-top">
+        <div class="pricing-badge">🔧 Best Value</div>
+        <div class="pricing-amount small"><sup>R</sup>3,500</div>
+        <div class="pricing-tagline">Build + R350/month maintenance</div>
+      </div>
+      <div class="pricing-features">
+        <ul>
+          <li>Everything in the Full Build package</li>
+          <li>Monthly text &amp; image updates</li>
+          <li>Small changes &amp; fixes each month</li>
+          <li>Site monitored &amp; kept running smoothly</li>
+          <li>Priority turnaround on changes</li>
+          <li>Cancel anytime — no lock-in</li>
+        </ul>
+      </div>
+      <div class="pricing-cta">
+        <a href="https://pay.yoco.com/r/4GnOjW" target="_blank" rel="noopener" class="btn-orange">Get Started →</a>
+      </div>
+    </div>
+
+    <!-- PACKAGE 3: Quick Fix -->
     <div class="pricing-card">
       <div class="pricing-top">
-        <div class="pricing-amount small"><sup>R</sup>350</div>
+        <div class="pricing-amount small"><sup>R</sup>500</div>
         <div class="pricing-tagline">Per fix · Pay only when done</div>
       </div>
       <div class="pricing-features">
         <ul>
-          <li>Update text, prices or contact details</li>
+          <li>Update text, prices or details</li>
           <li>Fix a broken button or link</li>
           <li>Swap out images or photos</li>
           <li>Small layout or colour changes</li>
@@ -692,7 +716,7 @@ footer a { color: #555; text-decoration: none; }
         </ul>
       </div>
       <div class="pricing-cta">
-        <a href="https://pay.yoco.com/r/m9eQlP" target="_blank" rel="noopener" class="btn-outline-orange">Pay R350 — Request a Fix →</a>
+        <a href="https://pay.yoco.com/r/2YV6j5" target="_blank" rel="noopener" class="btn-outline-orange">Pay R500 — Request a Fix →</a>
       </div>
     </div>
 
