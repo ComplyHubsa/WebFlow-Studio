@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vensource Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f4f5f7;color:#111827;font-size:14px;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#111827;min-height:100vh;padding:20px 12px;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100}
+.sidebar-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:white;padding:4px 8px;margin-bottom:24px;letter-spacing:-0.02em}
+.sidebar-logo-icon{width:28px;height:28px;background:#16a34a;border-radius:5px;display:flex;align-items:center;justify-content:center}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;margin-bottom:1px;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all 0.15s;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:white;font-weight:600}
+.sidebar-footer{margin-top:auto;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px}
+.main{margin-left:220px;flex:1;padding:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 28px;border-bottom:1px solid #e5e7eb;background:white}
+.topbar h1{font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;border-left:3px solid #16a34a;padding-left:10px}
+.topbar-sub{font-size:13px;color:#6b7280;margin-top:2px;padding-left:13px}
+.content{padding:24px 28px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px}
+.stat-label{font-size:12px;color:#6b7280;font-weight:500;margin-bottom:6px}
+.stat-num{font-size:24px;font-weight:800;letter-spacing:-0.02em}
+.stat-blue{color:#1d4ed8}.stat-green{color:#16a34a}.stat-amber{color:#d97706}.stat-red{color:#dc2626}
+.card{background:white;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.card-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #f3f4f6}
+.card-title{font-size:14px;font-weight:700;color:#111827}
+.btn-primary{background:#16a34a;color:white;border:none;padding:9px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-primary:hover{background:#15803d}
+.btn-secondary{background:#f9fafb;color:#374151;border:1px solid #e5e7eb;padding:9px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-secondary:hover{background:#f3f4f6}
+.form-input{width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:7px;font-size:13px;outline:none;background:white;color:#111827;font-family:inherit}
+.form-input:focus{border-color:#16a34a}
+.form-label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+.form-row{margin-bottom:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal{background:white;border-radius:12px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:700;padding:18px 20px;border-bottom:1px solid #e5e7eb}
+.modal-body{padding:20px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;padding:14px 20px;border-top:1px solid #e5e7eb}
+.btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:9px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer}
+.tab-bar{display:flex;gap:6px;margin-bottom:20px}
+.tab-btn{padding:8px 18px;border-radius:8px;border:1px solid #e5e7eb;background:white;font-size:13px;font-weight:600;cursor:pointer;color:#6b7280}
+.tab-btn.active{background:#16a34a;color:white;border-color:#16a34a}
+.order-row-header:hover{background:#f9fafb}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+      Vensource
+    </div>
+    <a class="nav-item active" href="marketplace-admin.html">🏪 Admin</a>
+    <a class="nav-item" onclick="openCalcModal()" style="cursor:pointer">🧮 Price calculator</a>
+    <a class="nav-item" href="marketplace.html" target="_blank">🛒 View Vensource</a>
+    <div class="sidebar-footer">
+      <div style="font-size:12px;color:rgba(255,255,255,0.3);padding:8px 10px">workperposes@gmail.com</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1>Vensource Admin</h1>
+        <div class="topbar-sub">Orders, supplier accounts and member management</div>
+      </div>
+      <a href="marketplace.html" target="_blank" class="btn-primary" style="text-decoration:none">View Vensource →</a>
+    </div>
+    <div class="content">
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px">
+        <div class="stat-card"><div class="stat-label">Total orders</div><div class="stat-num stat-blue" id="mkt-stat-orders">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pending orders</div><div class="stat-num stat-amber" id="mkt-stat-pending">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total order value</div><div class="stat-num stat-green" id="mkt-stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-label">My total margin</div><div class="stat-num stat-green" id="mkt-stat-margin">—</div></div>
+        <div class="stat-card"><div class="stat-label">Registered members</div><div class="stat-num stat-blue" id="mkt-stat-users">—</div></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-suppliers" onclick="showTab('suppliers')">🏭 Supplier accounts</button>
+        <button class="tab-btn" id="tab-orders" onclick="showTab('orders')">📦 Quote requests</button>
+        <button class="tab-btn" id="tab-quotes" onclick="showTab('quotes')">💬 Send quotes</button>
+        <button class="tab-btn" id="tab-pipeline" onclick="showTab('pipeline')">🔄 Pipeline</button>
+        <button class="tab-btn" id="tab-users" onclick="showTab('users')">👥 Members</button>
+      </div>
+
+      <!-- SUPPLIERS SECTION -->
+      <div id="section-suppliers">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Supplier trade accounts</span>
+            <button class="btn-primary" onclick="openAddSupplier()">+ Add supplier</button>
+          </div>
+          <div style="font-size:12px;color:#6b7280;padding:12px 18px;border-bottom:1px solid #f3f4f6">
+            Store your negotiated deals, trade account numbers, discounts and contact details here.
+          </div>
+          <div id="suppliers-list" style="padding:0 18px"></div>
+        </div>
+      </div>
+
+      <!-- ORDERS SECTION -->
+      <div id="section-orders" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Orders</span>
+            <div style="display:flex;gap:8px">
+              <select id="order-filter" onchange="renderOrders()" class="form-input" style="width:auto;padding:6px 10px;font-size:12px">
+                <option value="all">All orders</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <button class="btn-secondary" onclick="loadData()" style="font-size:12px;padding:6px 12px">↻ Refresh</button>
+            </div>
+          </div>
+          <div id="orders-list"></div>
+        </div>
+      </div>
+
+      <!-- SEND QUOTES SECTION -->
+      <div id="section-quotes" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Send quotes to clients</span>
+            <div style="font-size:12px;color:#6b7280">Select a quote request and send a price to the client via WhatsApp</div>
+          </div>
+          <div id="quotes-list"></div>
+        </div>
+      </div>
+
+      <!-- PIPELINE SECTION -->
+      <div id="section-pipeline" style="display:none">
+        <div style="overflow-x:auto;padding-bottom:8px">
+          <div id="pipeline-board" style="display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;min-width:900px"></div>
+        </div>
+      </div>
+
+      <!-- USERS SECTION -->
+      <div id="section-users" style="display:none">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Marketplace members</span></div>
+          <div id="users-list" style="padding:0 18px"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD SUPPLIER MODAL -->
+<div class="modal-overlay" id="supplierModal">
+  <div class="modal">
+    <div class="modal-title" id="supplierModalTitle">Add supplier account</div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Supplier name *</label><input class="form-input" id="sa-name" placeholder="e.g. Plumblink"/></div>
+        <div class="form-row"><label class="form-label">Category</label>
+          <select class="form-input" id="sa-category">
+            <option>Plumbing</option><option>Electrical</option><option>Construction</option>
+            <option>Safety & PPE</option><option>General supplies</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin:14px 0 8px">Trade account</div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Account number</label><input class="form-input" id="sa-account-num" placeholder="TRD-00123"/></div>
+        <div class="form-row"><label class="form-label">Supplier gives me (%)</label><input class="form-input" type="number" id="sa-discount" placeholder="20" oninput="calcMyMarginPct()"/></div>
+        <div class="form-row"><label class="form-label">Client gets (%)</label><input class="form-input" type="number" id="sa-client-discount" placeholder="15" oninput="calcMyMarginPct()"/></div>
+        <div class="form-row" style="grid-column:1/-1">
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;color:#15803d;font-weight:600">My margin %</span>
+            <span style="font-size:18px;font-weight:800;color:#15803d" id="sa-margin-display">0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Payment terms</label>
+          <select class="form-input" id="sa-terms">
+            <option>COD</option><option>Net 7</option><option>Net 14</option>
+            <option selected>Net 30</option><option>Net 45</option><option>Net 60</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="form-label">Credit limit (R)</label><input class="form-input" type="number" id="sa-credit-limit" placeholder="50000"/></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin:14px 0 8px">Contact & ordering</div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Rep name</label><input class="form-input" id="sa-rep-name" placeholder="John Smith"/></div>
+        <div class="form-row"><label class="form-label">Rep WhatsApp</label><input class="form-input" id="sa-rep-phone" placeholder="+27 82 000 0000"/></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Rep email</label><input class="form-input" id="sa-rep-email" placeholder="rep@supplier.co.za"/></div>
+        <div class="form-row"><label class="form-label">How to order</label>
+          <select class="form-input" id="sa-order-method">
+            <option>WhatsApp order to rep</option><option>Email purchase order</option>
+            <option>Online portal</option><option>Phone call</option><option>Branch pickup</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Portal / website</label><input class="form-input" id="sa-portal" placeholder="trade.supplier.co.za"/></div>
+      <div class="form-row"><label class="form-label">Notes</label><textarea class="form-input" id="sa-notes" rows="2" placeholder="Min order, delivery times, special terms..." style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" onclick="closeSupplierModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveSupplier()">Save supplier</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://jfeybsttmiihfkghifmc.supabase.co';
+const SUPABASE_KEY='sb_publishable_9uwUoeDO8MlKSOTmqUVLiA_TAx3uiIu';
+
+var mktOrders=[];
+var mktUsers=[];
+var supplierAccounts=[];
+var editingSupId=null;
+
+window.addEventListener('load',function(){loadData();showTab('suppliers');});
+
+// ---- LOAD DATA ----
+async function loadData(){
+  try{
+    var r1=await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders?order=created_at.desc&select=*',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    mktOrders=await r1.json();if(!Array.isArray(mktOrders))mktOrders=[];
+    var r2=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users?order=created_at.desc&select=*',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    mktUsers=await r2.json();if(!Array.isArray(mktUsers))mktUsers=[];
+    var r3=await fetch(SUPABASE_URL+'/rest/v1/supplier_accounts?order=created_at.desc&select=*',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    var dbSups=await r3.json();
+    if(Array.isArray(dbSups))supplierAccounts=dbSups.map(function(s){return{
+      id:s.id,name:s.name,category:s.category,accountNum:s.account_num,
+      discount:s.discount,clientDiscount:s.client_discount,myMargin:s.my_margin,
+      terms:s.terms,creditLimit:s.credit_limit,repName:s.rep_name,
+      repPhone:s.rep_phone,repEmail:s.rep_email,orderMethod:s.order_method,
+      portal:s.portal,notes:s.notes
+    };});
+    updateStats();renderOrders();renderUsers();renderSuppliers();
+  }catch(e){console.error('loadData error',e);}
+}
+
+function updateStats(){
+  // Calculate financials
+  var totalValue=mktOrders.reduce(function(s,o){return s+(parseFloat(o.total_value)||0);},0);
+  var totalMargin=mktOrders.reduce(function(s,o){
+    // Margin = what client paid minus what we pay supplier
+    var clientPaid=parseFloat(o.total_value)||0;
+    var supplierCost=clientPaid-(parseFloat(o.discount_amount)||0)*0; // discount_amount is the client saving
+    // Our margin = discount we got from supplier minus discount we gave client
+    // We need to get this from supplier accounts
+    var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+    var ourDiscount=sup?sup.discount:0;
+    var clientDiscount=parseFloat(o.discount_pct)||0;
+    var originalValue=clientPaid/(1-(clientDiscount/100));
+    var wePay=originalValue*(1-(ourDiscount/100));
+    return s+(clientPaid-wePay);
+  },0);
+  document.getElementById('mkt-stat-orders').textContent=mktOrders.length;
+  document.getElementById('mkt-stat-pending').textContent=mktOrders.filter(function(o){return o.status==='pending';}).length;
+  document.getElementById('mkt-stat-value').textContent='R'+Math.round(totalValue).toLocaleString('en-ZA');
+  document.getElementById('mkt-stat-margin').textContent='R'+Math.round(totalMargin).toLocaleString('en-ZA');
+  document.getElementById('mkt-stat-users').textContent=mktUsers.length;
+}
+
+// ---- TABS ----
+function showTab(tab){
+  ['suppliers','orders','quotes','pipeline','users'].forEach(function(t){
+    document.getElementById('section-'+t).style.display=t===tab?'block':'none';
+    var btn=document.getElementById('tab-'+t);
+    if(btn)btn.className=t===tab?'tab-btn active':'tab-btn';
+  });
+  if(tab==='pipeline')renderPipeline();
+  if(tab==='quotes')renderQuotesList();
+}
+
+// ---- ORDERS ----
+var expandedOrderId=null;
+
+function renderOrders(){
+  var el=document.getElementById('orders-list');if(!el)return;
+  var filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'all';
+  var list=filter==='all'?mktOrders:mktOrders.filter(function(o){return o.status===filter;});
+  if(!list.length){el.innerHTML='<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">No quote requests yet.</div>';return;}
+
+  var sc={pending:'#fef9c3;color:#854d0e',confirmed:'#eff6ff;color:#1d4ed8',delivered:'#f0fdf4;color:#15803d',cancelled:'#fef2f2;color:#dc2626'};
+  var sl={pending:'Awaiting quote',confirmed:'Quote sent',delivered:'Delivered',cancelled:'Cancelled'};
+
+  el.innerHTML=list.map(function(o){
+    var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+    var clientPaid=parseFloat(o.total_value)||0;
+
+    return '<div style="border-bottom:1px solid #f3f4f6">'
+      // Collapsed row - always visible
+      +'<div data-oid="'+o.id+'" onclick="toggleOrder(this.dataset.oid)" class="order-row-header" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer">'
+      +'<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">'
+      +'<span style="font-size:16px" id="arrow-'+o.id+'">▶</span>'
+      +'<div style="min-width:0">'
+      +'<div style="font-size:13px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(o.user_business||o.user_name||'Unknown')+'</div>'
+      +'<div style="font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(o.items_description||'').substring(0,50)+'...</div>'
+      +'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'
+      +(clientPaid?'<span style="font-size:12px;font-weight:700;color:#15803d">R'+Math.round(clientPaid).toLocaleString('en-ZA')+'</span>':'')
+      +'<span style="font-size:11px;color:#9ca3af">'+new Date(o.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short'})+'</span>'
+      +'<span style="background:'+(sc[o.status]||'#f3f4f6;color:#374151')+';padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700">'+(sl[o.status]||o.status)+'</span>'
+      +'</div></div>'
+
+      // Expanded detail - hidden by default
+      +'<div id="order-detail-'+o.id+'" style="display:none;background:#fafafa;border-top:1px solid #f3f4f6">'
+      // Two col detail
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">'
+      +'<div style="padding:14px 16px;border-right:1px solid #f3f4f6">'
+      +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Items requested</div>'
+      +'<div style="font-size:13px;color:#374151;line-height:1.6">'+(o.items_description||'')+'</div>'
+      +(o.notes?'<div style="font-size:11px;color:#9ca3af;margin-top:6px;font-style:italic">'+o.notes+'</div>':'')
+      +'</div>'
+      +'<div style="padding:14px 16px">'
+      +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Delivery details</div>'
+      +'<div style="font-size:12px;color:#374151;line-height:1.8">'
+      +(o.delivery_address?'📍 '+o.delivery_address+'<br>':'')
+      +(o.delivery_contact?'👤 '+o.delivery_contact+'<br>':'')
+      +(o.delivery_date?'📅 Needed by: '+o.delivery_date:'')
+      +'</div>'
+      +'<div style="margin-top:8px;font-size:12px;color:#6b7280">Supplier: <strong>'+o.supplier_name+'</strong>'+(sup&&sup.terms?' · '+sup.terms:'')+'</div>'
+      +'</div></div>'
+      // Financials if recorded
+      +(clientPaid?
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:#f0fdf4;border-top:1px solid #e5e7eb">'
+        +'<div style="padding:10px 14px;border-right:1px solid #bbf7d0;text-align:center"><div style="font-size:10px;color:#15803d;font-weight:600;text-transform:uppercase">Client paid</div><div style="font-size:16px;font-weight:800;color:#111827">R'+Math.round(clientPaid).toLocaleString('en-ZA')+'</div></div>'
+        +'<div style="padding:10px 14px;border-right:1px solid #bbf7d0;text-align:center"><div style="font-size:10px;color:#dc2626;font-weight:600;text-transform:uppercase">To supplier</div><div style="font-size:16px;font-weight:800;color:#dc2626">R'+Math.round(parseFloat(o.supplier_cost)||0).toLocaleString('en-ZA')+'</div></div>'
+        +'<div style="padding:10px 14px;text-align:center"><div style="font-size:10px;color:#15803d;font-weight:600;text-transform:uppercase">Your margin</div><div style="font-size:16px;font-weight:800;color:#15803d">R'+Math.round(parseFloat(o.discount_amount)||0).toLocaleString('en-ZA')+'</div></div>'
+        +'</div>'
+      :'')
+      // Actions
+      +'<div style="padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid #f3f4f6">'
+      +(o.user_phone?'<a href="https://wa.me/'+(o.user_phone).replace(/[^0-9]/g,'')+'" target="_blank" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">💬 WhatsApp</a>':'')
+      +'<button data-id="'+o.id+'" onclick="openQuoteBuilder(this.dataset.id)" style="background:#16a34a;color:white;border:none;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">💬 Send quote</button>'
+      +'<button data-id="'+o.id+'" onclick="sendPurchaseOrder(this.dataset.id)" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">📋 PO</button>'
+      +(!clientPaid?'<button data-id="'+o.id+'" onclick="openPaymentModal(this.dataset.id)" style="background:#111827;color:white;border:none;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">💰 Record payment</button>':'')
+      +'<button data-id="'+o.id+'" data-s="delivered" onclick="updateStatus(this.dataset.id,this.dataset.s)" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">✓ Delivered</button>'
+      +'<button data-id="'+o.id+'" data-s="cancelled" onclick="updateStatus(this.dataset.id,this.dataset.s)" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer">✕ Cancel</button>'
+      +'<button data-id="'+o.id+'" onclick="deleteOrder(this.dataset.id)" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:12px;padding:5px 8px;margin-left:auto">🗑 Delete</button>'
+      +'</div></div></div>';
+  }).join('');
+}
+
+function toggleOrder(id){
+  var detail=document.getElementById('order-detail-'+id);
+  var arrow=document.getElementById('arrow-'+id);
+  if(!detail)return;
+  var isOpen=detail.style.display!=='none';
+  detail.style.display=isOpen?'none':'block';
+  if(arrow)arrow.textContent=isOpen?'▶':'▼';
+}
+
+
+async function deleteOrder(id){
+  if(!confirm('Delete this quote request? This cannot be undone.'))return;
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    mktOrders=mktOrders.filter(function(o){return o.id!==id;});
+    updateStats();renderOrders();showToast('Deleted.');
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ---- PURCHASE ORDER ----
+function sendPurchaseOrder(orderId){
+  var o=mktOrders.find(function(x){return x.id===orderId;});
+  if(!o)return;
+  var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+  var now=new Date();
+  var poNum='PO-'+now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+orderId.slice(-4);
+
+  var lines=[
+    '*PURCHASE ORDER — '+poNum+'*',
+    '*Vensource SA*',
+    'Date: '+now.toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'}),
+    '',
+    '*Supplier:* '+o.supplier_name,
+    (sup&&sup.accountNum?'*Account #:* '+sup.accountNum:''),
+    '',
+    '*DELIVER TO:*',
+    (o.user_business||''),
+    (o.user_name?'Attn: '+o.user_name:''),
+    (o.delivery_address||''),
+    (o.user_phone?'Tel: '+o.user_phone:''),
+    '',
+    '*ORDER ITEMS:*',
+    (o.items_description||''),
+    (o.delivery_date?'Required by: '+o.delivery_date:''),
+    (o.notes?'Notes: '+o.notes:''),
+    '',
+    '*Payment terms:* '+(sup?sup.terms:'As agreed'),
+    '',
+    'Please confirm receipt of this order.',
+    'Thank you.'
+  ];
+  var msg=lines.filter(function(l){return l!=='';}).join('\n');
+    var phone=sup&&sup.repPhone?sup.repPhone.replace(/[^0-9]/g,''):'';
+  if(phone){
+    window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg));
+  }else{
+    window.open('https://wa.me/?text='+encodeURIComponent(msg));
+    showToast('No supplier WhatsApp saved — opening blank chat');
+  }
+}
+
+async function updateStatus(id,status){
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({status:status})});
+    var idx=mktOrders.findIndex(function(o){return o.id===id;});
+    if(idx!==-1)mktOrders[idx].status=status;
+    updateStats();renderOrders();showToast('Order updated: '+status);
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ---- USERS ----
+function renderUsers(){
+  var el=document.getElementById('users-list');if(!el)return;
+  if(!mktUsers.length){el.innerHTML='<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">No members yet.</div>';return;}
+  el.innerHTML='<div style="display:grid;grid-template-columns:1.5fr 1.5fr 1fr 1fr 1fr 80px;padding:10px 0;border-bottom:2px solid #e5e7eb;gap:8px">'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9ca3af">Name</span>'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9ca3af">Business</span>'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9ca3af">Phone</span>'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9ca3af">Industry</span>'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9ca3af">Joined</span>'
+    +'<span></span>'
+    +'</div>'
+    +mktUsers.map(function(u){
+      return '<div style="display:grid;grid-template-columns:1.5fr 1.5fr 1fr 1fr 1fr 80px;padding:10px 0;border-bottom:1px solid #f3f4f6;gap:8px;align-items:center">'
+        +'<div style="font-size:13px;font-weight:600">'+(u.name||'')+'</div>'
+        +'<div style="font-size:13px;color:#374151">'+(u.business_name||'')+'</div>'
+        +'<a href="https://wa.me/'+(u.phone||'').replace(/[^0-9]/g,'')+'" target="_blank" style="font-size:12px;color:#15803d;font-weight:600;text-decoration:none">💬 '+(u.phone||'')+'</a>'
+        +'<div style="font-size:12px;color:#6b7280">'+(u.industry||'—')+'</div>'
+        +'<div style="font-size:12px;color:#9ca3af">'+new Date(u.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short'})+'</div>'
+        +'<button data-uid="'+u.id+'" onclick="deleteMember(this.dataset.uid)" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">Delete</button>'
+        +'</div>';
+    }).join('');
+}
+
+async function deleteMember(id){
+  if(!confirm('Delete this member? This cannot be undone.'))return;
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/marketplace_users?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    mktUsers=mktUsers.filter(function(u){return u.id!==id;});
+    document.getElementById('mkt-stat-users').textContent=mktUsers.length;
+    renderUsers();showToast('Member deleted.');
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ---- SUPPLIER ACCOUNTS ----
+function openAddSupplier(id){
+  editingSupId=id||null;
+  document.getElementById('supplierModalTitle').textContent=id?'Edit supplier':'Add supplier account';
+  if(id){
+    var s=supplierAccounts.find(function(x){return x.id===id;});
+    if(s){
+      document.getElementById('sa-name').value=s.name||'';
+      document.getElementById('sa-category').value=s.category||'Plumbing';
+      document.getElementById('sa-account-num').value=s.accountNum||'';
+      document.getElementById('sa-discount').value=s.discount||'';
+      document.getElementById('sa-client-discount').value=s.clientDiscount||'';
+      calcMyMarginPct();
+      document.getElementById('sa-terms').value=s.terms||'Net 30';
+      document.getElementById('sa-credit-limit').value=s.creditLimit||'';
+      document.getElementById('sa-rep-name').value=s.repName||'';
+      document.getElementById('sa-rep-phone').value=s.repPhone||'';
+      document.getElementById('sa-rep-email').value=s.repEmail||'';
+      document.getElementById('sa-order-method').value=s.orderMethod||'WhatsApp order to rep';
+      document.getElementById('sa-portal').value=s.portal||'';
+      document.getElementById('sa-notes').value=s.notes||'';
+    }
+  }else{
+    ['sa-name','sa-account-num','sa-rep-name','sa-rep-phone','sa-rep-email','sa-portal','sa-notes'].forEach(function(fid){var el=document.getElementById(fid);if(el)el.value='';});
+    ['sa-discount','sa-client-discount','sa-credit-limit'].forEach(function(fid){var el=document.getElementById(fid);if(el)el.value='';});
+  }
+  document.getElementById('supplierModal').style.display='flex';
+}
+function closeSupplierModal(){document.getElementById('supplierModal').style.display='none';editingSupId=null;}
+
+async function saveSupplier(){
+  var name=document.getElementById('sa-name').value.trim();
+  if(!name){alert('Supplier name required.');return;}
+  var supplierDisc=parseFloat(document.getElementById('sa-discount').value)||0;
+  var clientDisc=parseFloat(document.getElementById('sa-client-discount').value)||0;
+  var s={id:editingSupId||Date.now().toString(),name,
+    category:document.getElementById('sa-category').value,
+    accountNum:document.getElementById('sa-account-num').value.trim(),
+    discount:supplierDisc,
+    clientDiscount:clientDisc,
+    myMargin:supplierDisc-clientDisc,
+    terms:document.getElementById('sa-terms').value,
+    creditLimit:parseFloat(document.getElementById('sa-credit-limit').value)||0,
+    repName:document.getElementById('sa-rep-name').value.trim(),
+    repPhone:document.getElementById('sa-rep-phone').value.trim(),
+    repEmail:document.getElementById('sa-rep-email').value.trim(),
+    orderMethod:document.getElementById('sa-order-method').value,
+    portal:document.getElementById('sa-portal').value.trim(),
+    notes:document.getElementById('sa-notes').value.trim()
+  };
+  if(editingSupId){var i=supplierAccounts.findIndex(function(x){return x.id===editingSupId;});if(i!==-1)supplierAccounts[i]=s;else supplierAccounts.push(s);}
+  else supplierAccounts.push(s);
+  // Save to Supabase
+  try{
+    var row={
+      id:s.id,name:s.name,category:s.category,account_num:s.accountNum,
+      discount:s.discount,client_discount:s.clientDiscount,my_margin:s.myMargin,
+      terms:s.terms,credit_limit:s.creditLimit,rep_name:s.repName,
+      rep_phone:s.repPhone,rep_email:s.repEmail,order_method:s.orderMethod,
+      portal:s.portal,notes:s.notes,active:true
+    };
+    var method=editingSupId?'PATCH':'POST';
+    var url=editingSupId?SUPABASE_URL+'/rest/v1/supplier_accounts?id=eq.'+editingSupId:SUPABASE_URL+'/rest/v1/supplier_accounts';
+    await fetch(url,{method:method,headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(row)});
+  }catch(e){console.error('saveSupplier error',e);}
+  closeSupplierModal();renderSuppliers();showToast('Supplier saved!');
+}
+
+async function deleteSupplier(id){
+  if(!confirm('Remove this supplier?'))return;
+  supplierAccounts=supplierAccounts.filter(function(s){return s.id!==id;});
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/supplier_accounts?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+  }catch(e){console.error('deleteSupplier error',e);}
+  renderSuppliers();
+}
+
+function renderSuppliers(){
+  var el=document.getElementById('suppliers-list');if(!el)return;
+  if(!supplierAccounts.length){
+    el.innerHTML='<div style="padding:32px;text-align:center;color:#9ca3af;font-size:13px">No supplier accounts yet.<br>Add your first negotiated deal above.</div>';
+    return;
+  }
+  el.innerHTML=supplierAccounts.map(function(s){
+    return '<div style="padding:16px;border-bottom:1px solid #f3f4f6">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<div><div style="font-size:15px;font-weight:700">'+s.name+'</div>'
+      +'<span style="background:#f3f4f6;color:#374151;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px">'+s.category+'</span></div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button data-id="'+s.id+'" onclick="openAddSupplier(this.dataset.id)" style="background:#e8f5ee;color:#145c38;border:1px solid #2ea366;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Edit</button>'
+      +'<button data-id="'+s.id+'" onclick="deleteSupplier(this.dataset.id)" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer">✕</button>'
+      +'</div></div>'
+      +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px">'
+      +'<div style="background:#f9fafb;border-radius:8px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Account #</div><div style="font-size:13px;font-weight:700">'+(s.accountNum||'—')+'</div></div>'
+      +'<div style="background:#f0fdf4;border-radius:8px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Supplier gives me</div><div style="font-size:18px;font-weight:800;color:#15803d">'+(s.discount||0)+'%</div></div>'
+      +'<div style="background:#eff6ff;border-radius:8px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Client gets</div><div style="font-size:18px;font-weight:800;color:#1d4ed8">'+(s.clientDiscount||0)+'%</div></div>'
+      +'<div style="background:#fdf6e3;border-radius:8px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">My margin</div><div style="font-size:18px;font-weight:800;color:#d97706">'+(s.myMargin||0)+'%</div></div>'
+      +'<div style="background:#eff6ff;border-radius:8px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Terms</div><div style="font-size:13px;font-weight:700;color:#1d4ed8">'+(s.terms||'—')+'</div></div>'
+      +'<div style="background:#f9fafb;border-radius:8px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Credit limit</div><div style="font-size:13px;font-weight:700">'+(s.creditLimit?'R'+Math.round(s.creditLimit).toLocaleString('en-ZA'):'—')+'</div></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#6b7280">'
+      +(s.repName?'<span>👤 '+s.repName+'</span>':'')
+      +(s.repPhone?'<a href="https://wa.me/'+s.repPhone.replace(/[^0-9]/g,'')+'" target="_blank" style="color:#15803d;font-weight:600;text-decoration:none">💬 '+s.repPhone+'</a>':'')
+      +(s.repEmail?'<span>✉️ '+s.repEmail+'</span>':'')
+      +(s.portal?'<a href="'+(s.portal.startsWith('http')?s.portal:'https://'+s.portal)+'" target="_blank" style="color:#1d4ed8;text-decoration:none">🌐 '+s.portal+'</a>':'')
+      +'</div>'
+      +(s.notes?'<div style="font-size:12px;color:#9ca3af;margin-top:8px;font-style:italic">'+s.notes+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+// ---- PIPELINE ----
+var PIPELINE_STAGES=[
+  {id:'pending',label:'New Order',color:'#854d0e',bg:'#fef9c3',border:'#fde68a'},
+  {id:'confirmed',label:'Confirmed',color:'#1d4ed8',bg:'#eff6ff',border:'#bfdbfe'},
+  {id:'processing',label:'Ordered from Supplier',color:'#7c3aed',bg:'#f5f3ff',border:'#ddd6fe'},
+  {id:'delivered',label:'Delivered',color:'#15803d',bg:'#f0fdf4',border:'#bbf7d0'}
+];
+
+function renderPipeline(){
+  var el=document.getElementById('pipeline-board');if(!el)return;
+  el.innerHTML=PIPELINE_STAGES.map(function(stage){
+    var cards=mktOrders.filter(function(o){
+      if(stage.id==='processing')return o.status==='processing';
+      return o.status===stage.id;
+    });
+    var stageValue=cards.reduce(function(s,o){return s+(parseFloat(o.total_value)||0);},0);
+    var stageMargin=cards.reduce(function(s,o){
+      var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+      var ourDisc=sup?parseFloat(sup.discount)||0:0;
+      var clientDisc=parseFloat(o.discount_pct)||0;
+      var clientPaid=parseFloat(o.total_value)||0;
+      var orig=clientDisc>0?clientPaid/(1-(clientDisc/100)):clientPaid;
+      var wePay=ourDisc>0?orig*(1-(ourDisc/100)):clientPaid;
+      return s+(clientPaid-wePay);
+    },0);
+
+    return '<div style="background:'+stage.bg+';border:1px solid '+stage.border+';border-radius:12px;padding:12px">'
+      +'<div style="margin-bottom:10px">'
+      +'<div style="font-size:12px;font-weight:700;color:'+stage.color+';text-transform:uppercase;letter-spacing:0.05em">'+stage.label+'</div>'
+      +'<div style="display:flex;justify-content:space-between;margin-top:4px">'
+      +'<span style="font-size:11px;color:#9ca3af">'+cards.length+' order'+(cards.length!==1?'s':'')+'</span>'
+      +(stageValue?'<span style="font-size:11px;font-weight:700;color:'+stage.color+'">R'+Math.round(stageValue).toLocaleString('en-ZA')+'</span>':'')
+      +'</div>'
+      +(stageMargin>0?'<div style="font-size:10px;color:#15803d;font-weight:600;margin-top:2px">Margin: R'+Math.round(stageMargin).toLocaleString('en-ZA')+'</div>':'')
+      +'</div>'
+      +cards.map(function(o){
+        var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+        var ourDisc=sup?parseFloat(sup.discount)||0:0;
+        var clientDisc=parseFloat(o.discount_pct)||0;
+        var clientPaid=parseFloat(o.total_value)||0;
+        var orig=clientDisc>0?clientPaid/(1-(clientDisc/100)):clientPaid;
+        var wePay=ourDisc>0?orig*(1-(ourDisc/100)):clientPaid;
+        var margin=Math.round(clientPaid-wePay);
+        var stageIdx=PIPELINE_STAGES.findIndex(function(s){return s.id===stage.id;});
+
+        return '<div style="background:white;border:1px solid '+stage.border+';border-radius:8px;padding:10px;margin-bottom:8px">'
+          +'<div style="font-size:13px;font-weight:700;margin-bottom:2px;color:#111827">'+(o.user_business||o.user_name||'Unknown')+'</div>'
+          +'<div style="font-size:11px;color:#6b7280;margin-bottom:6px">'+o.supplier_name+' · '+new Date(o.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short'})+'</div>'
+          +(clientPaid?'<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+            +'<span style="font-size:12px;font-weight:700;color:#111827">R'+Math.round(clientPaid).toLocaleString('en-ZA')+'</span>'
+            +(margin>0?'<span style="font-size:11px;font-weight:700;color:#15803d">+R'+margin.toLocaleString('en-ZA')+'</span>':'')
+            +'</div>':'')
+          +'<div style="font-size:11px;color:#6b7280;margin-bottom:8px;line-height:1.4">'+(o.items_description||'').substring(0,60)+(o.items_description&&o.items_description.length>60?'...':'')+'</div>'
+          +'<div style="display:flex;gap:4px;flex-wrap:wrap">'
+          +(stageIdx>0?'<button data-oid="'+o.id+'" data-stage="'+PIPELINE_STAGES[stageIdx-1].id+'" onclick="movePipeline(this.dataset.oid,this.dataset.stage)" style="font-size:10px;padding:3px 8px;background:#f9fafb;color:#374151;border:1px solid #e5e7eb;border-radius:4px;cursor:pointer">← Back</button>':'')
+          +(stageIdx<PIPELINE_STAGES.length-1?'<button data-oid="'+o.id+'" data-stage="'+PIPELINE_STAGES[stageIdx+1].id+'" onclick="movePipeline(this.dataset.oid,this.dataset.stage)" style="font-size:10px;padding:3px 8px;background:'+stage.bg+';color:'+stage.color+';border:1px solid '+stage.border+';border-radius:4px;cursor:pointer;font-weight:600">→ Move forward</button>':'')
+          +(o.user_phone?'<a href="https://wa.me/'+(o.user_phone).replace(/[^0-9]/g,'')+'" target="_blank" style="font-size:10px;padding:3px 8px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:4px;text-decoration:none">💬</a>':'')
+          +'<button data-oid="'+o.id+'" onclick="sendPurchaseOrder(this.dataset.oid)" style="font-size:10px;padding:3px 8px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:4px;cursor:pointer">📋 PO</button>'
+          +'</div></div>';
+      }).join('')
+      +'</div>';
+  }).join('');
+}
+
+async function movePipeline(orderId,newStatus){
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders?id=eq.'+orderId,{method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({status:newStatus})});
+    var idx=mktOrders.findIndex(function(o){return o.id===orderId;});
+    if(idx!==-1)mktOrders[idx].status=newStatus;
+    updateStats();
+    renderPipeline();
+    showToast('Order moved to: '+newStatus);
+  }catch(e){alert('Error: '+e.message);}
+}
+
+function calcMyMarginPct(){
+  var sup=parseFloat(document.getElementById('sa-discount').value)||0;
+  var cli=parseFloat(document.getElementById('sa-client-discount').value)||0;
+  var margin=sup-cli;
+  var el=document.getElementById('sa-margin-display');
+  if(el){
+    el.textContent=margin+'%';
+    el.style.color=margin>0?'#15803d':margin<0?'#dc2626':'#9ca3af';
+  }
+}
+
+// ---- QUOTES ----
+function renderQuotesList(){
+  var el=document.getElementById('quotes-list');if(!el)return;
+  var pending=mktOrders.filter(function(o){return o.status==='pending'||o.status==='confirmed';});
+  if(!pending.length){
+    el.innerHTML='<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">No pending quote requests.</div>';
+    return;
+  }
+  el.innerHTML=pending.map(function(o){
+    return '<div style="padding:16px;border-bottom:1px solid #f3f4f6">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
+      +'<div>'
+      +'<div style="font-size:14px;font-weight:700">'+(o.user_business||o.user_name||'')+'</div>'
+      +'<div style="font-size:12px;color:#6b7280">'+o.supplier_name+' · '+new Date(o.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'})+'</div>'
+      +'</div>'
+      +'<span style="background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700">Awaiting quote</span>'
+      +'</div>'
+      +'<div style="font-size:13px;background:#f9fafb;padding:10px;border-radius:8px;margin-bottom:10px;line-height:1.5">'+(o.items_description||'')+'</div>'
+      +'<div style="font-size:12px;color:#6b7280;margin-bottom:10px">📍 '+(o.delivery_address||'')+(o.delivery_contact?' · 👤 '+o.delivery_contact:'')+'</div>'
+      +'<button data-oid="'+o.id+'" onclick="openQuoteBuilder(this.dataset.oid)" style="background:#16a34a;color:white;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">💬 Build & send quote</button>'
+      +'</div>';
+  }).join('');
+}
+
+function openQuoteBuilder(orderId){
+  var o=mktOrders.find(function(x){return x.id===orderId;});
+  if(!o)return;
+  var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+  document.getElementById('qb-order-id').value=orderId;
+  document.getElementById('qb-client-name').textContent=(o.user_business||o.user_name||'Client');
+  document.getElementById('qb-client-phone').textContent=(o.user_phone||'');
+  document.getElementById('qb-supplier-name').textContent=o.supplier_name;
+  document.getElementById('qb-items').textContent=(o.items_description||'');
+  document.getElementById('qb-address').textContent=(o.delivery_address||'');
+  document.getElementById('qb-contact').textContent=(o.delivery_contact||'');
+  document.getElementById('qb-amount').value='';
+  document.getElementById('qb-discount').value=(o.discount_pct||0);
+  document.getElementById('qb-delivery-days').value='';
+  document.getElementById('qb-notes').value='';
+  document.getElementById('qb-validity').value='3';
+  calcQuoteTotal();
+  document.getElementById('quoteBuilderModal').style.display='flex';
+}
+
+function calcQuoteTotal(){
+  var amount=parseFloat(document.getElementById('qb-amount').value)||0;
+  var disc=parseFloat(document.getElementById('qb-discount').value)||0;
+  var discAmt=amount*(disc/100);
+  var total=amount-discAmt;
+  var el=document.getElementById('qb-total-display');
+  if(el){
+    if(amount>0){
+      el.innerHTML='<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:#6b7280">Price excl. discount</span><span>R'+Math.round(amount).toLocaleString('en-ZA')+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:#15803d">Client discount ('+disc+'%)</span><span style="color:#15803d">-R'+Math.round(discAmt).toLocaleString('en-ZA')+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;border-top:1px solid #e5e7eb;padding-top:8px;margin-top:4px"><span>Client pays</span><span style="color:#15803d">R'+Math.round(total).toLocaleString('en-ZA')+'</span></div>';
+      el.style.display='block';
+    }else{
+      el.style.display='none';
+    }
+  }
+}
+
+function sendQuoteWhatsApp(){
+  var orderId=document.getElementById('qb-order-id').value;
+  var o=mktOrders.find(function(x){return x.id===orderId;});
+  if(!o)return;
+  var amount=parseFloat(document.getElementById('qb-amount').value)||0;
+  if(!amount){alert('Please enter the quote amount.');return;}
+  var disc=parseFloat(document.getElementById('qb-discount').value)||0;
+  var discAmt=Math.round(amount*(disc/100));
+  var total=Math.round(amount-discAmt);
+  var days=document.getElementById('qb-delivery-days').value.trim();
+  var notes=document.getElementById('qb-notes').value.trim();
+  var validity=document.getElementById('qb-validity').value||'3';
+  var now=new Date();
+  var quoteNum='QT-'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+'-'+orderId.slice(-4);
+
+  var lines=[
+    '*QUOTE — '+quoteNum+'*',
+    '*Vensource SA*',
+    'Date: '+now.toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'}),
+    '',
+    'Hi '+(o.user_name||'there')+',',
+    'Thank you for your quote request. Please find your quote below:',
+    '',
+    '*ITEMS QUOTED:*',
+    o.items_description,
+    '',
+    '*PRICING:*',
+    'Amount: R'+amount.toLocaleString('en-ZA'),
+    (disc>0?'Your discount ('+disc+'%): -R'+discAmt.toLocaleString('en-ZA'):''),
+    '*Total to pay: R'+total.toLocaleString('en-ZA')+'*',
+    '',
+    '*DELIVERY:*',
+    o.delivery_address,
+    (o.delivery_contact?'Contact: '+o.delivery_contact:''),
+    (days?'Estimated delivery: '+days+' business days after payment':''),
+    '',
+    (notes?'*Notes:* '+notes:''),
+    'Quote valid for '+validity+' days.',
+    '',
+    'To proceed, simply reply *ACCEPTED* and we will send you a payment link.',
+    '',
+    'Vensource SA'
+  ];
+  var msg=lines.filter(function(l){return l!==undefined&&l!=='';}).join('\n');
+  var phone=(o.user_phone||'').replace(/[^0-9]/g,'');
+  window.open('https://wa.me/'+(phone?phone:'')+'?text='+encodeURIComponent(msg));
+
+  // Update order status to confirmed
+  updateStatus(orderId,'confirmed');
+  document.getElementById('quoteBuilderModal').style.display='none';
+  showToast('Quote sent to client!');
+}
+
+// ---- PAYMENT RECORDING ----
+function openPaymentModal(orderId){
+  var o=mktOrders.find(function(x){return x.id===orderId;});
+  if(!o)return;
+  document.getElementById('pm-order-id').value=orderId;
+  document.getElementById('pm-order-info').innerHTML=
+    '<strong>'+(o.user_business||o.user_name||'')+'</strong> — '+o.supplier_name+'<br>'
+    +'<span style="color:#6b7280">'+( o.items_description||'').substring(0,80)+'...</span>';
+
+  // Pre-fill supplier cost based on trade discount
+  var sup=supplierAccounts.find(function(sa){return sa.name===o.supplier_name;});
+  document.getElementById('pm-client-paid').value='';
+  document.getElementById('pm-supplier-cost').value='';
+  document.getElementById('pm-reference').value='';
+
+  // Set supplier due date based on terms
+  var today=new Date();
+  var dueDate=new Date(today);
+  if(sup&&sup.terms){
+    var days=parseInt(sup.terms.replace(/[^0-9]/g,''))||0;
+    dueDate.setDate(dueDate.getDate()+days);
+  }
+  document.getElementById('pm-date').value=today.toISOString().split('T')[0];
+  document.getElementById('pm-supplier-due').value=dueDate.toISOString().split('T')[0];
+  document.getElementById('pm-split-display').style.display='none';
+  document.getElementById('paymentModal').style.display='flex';
+}
+
+function closePaymentModal(){document.getElementById('paymentModal').style.display='none';}
+
+function calcPaymentSplit(){
+  var paid=parseFloat(document.getElementById('pm-client-paid').value)||0;
+  var supplierCost=parseFloat(document.getElementById('pm-supplier-cost').value)||0;
+  var margin=paid-supplierCost;
+  var display=document.getElementById('pm-split-display');
+  if(paid>0||supplierCost>0){
+    display.style.display='block';
+    document.getElementById('pm-display-paid').textContent='R'+Math.round(paid).toLocaleString('en-ZA');
+    document.getElementById('pm-display-supplier').textContent='R'+Math.round(supplierCost).toLocaleString('en-ZA');
+    document.getElementById('pm-display-margin').textContent='R'+Math.round(margin).toLocaleString('en-ZA');
+    document.getElementById('pm-display-margin').style.color=margin>=0?'#15803d':'#dc2626';
+  }else{
+    display.style.display='none';
+  }
+}
+
+async function savePayment(){
+  var orderId=document.getElementById('pm-order-id').value;
+  var clientPaid=parseFloat(document.getElementById('pm-client-paid').value)||0;
+  var supplierCost=parseFloat(document.getElementById('pm-supplier-cost').value)||0;
+  if(!clientPaid){alert('Please enter the amount the client paid.');return;}
+  if(!supplierCost){alert('Please enter the amount you are paying the supplier.');return;}
+  var margin=clientPaid-supplierCost;
+  var paymentDate=document.getElementById('pm-date').value;
+  var supplierDue=document.getElementById('pm-supplier-due').value;
+  var reference=document.getElementById('pm-reference').value.trim();
+
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders?id=eq.'+orderId,{
+      method:'PATCH',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({
+        total_value:clientPaid,
+        discount_amount:margin,
+        payment_date:paymentDate||null,
+        supplier_due_date:supplierDue||null,
+        supplier_cost:supplierCost,
+        payment_reference:reference||null,
+        status:'confirmed'
+      })
+    });
+    var idx=mktOrders.findIndex(function(o){return o.id===orderId;});
+    if(idx!==-1){
+      mktOrders[idx].total_value=clientPaid;
+      mktOrders[idx].discount_amount=margin;
+      mktOrders[idx].supplier_cost=supplierCost;
+      mktOrders[idx].status='confirmed';
+    }
+    closePaymentModal();
+    updateStats();
+    renderOrders();
+    showToast('Payment recorded! Margin: R'+Math.round(margin).toLocaleString('en-ZA'));
+  }catch(e){alert('Error saving payment: '+e.message);}
+}
+
+function showCalc(){
+  document.getElementById('calc-normal-price').value='';
+  document.getElementById('calc-supplier-disc').value='';
+  document.getElementById('calc-client-disc').value='';
+  document.getElementById('calc-result').style.display='none';
+  // Pre-fill with first supplier's discounts if available
+  if(supplierAccounts.length){
+    document.getElementById('calc-supplier-disc').value=supplierAccounts[0].discount||'';
+    document.getElementById('calc-client-disc').value=supplierAccounts[0].clientDiscount||'';
+  }
+  document.getElementById('calcModal').style.display='flex';
+}
+
+function runCalc(){
+  var normal=parseFloat(document.getElementById('calc-normal-price').value)||0;
+  var supDisc=parseFloat(document.getElementById('calc-supplier-disc').value)||0;
+  var cliDisc=parseFloat(document.getElementById('calc-client-disc').value)||0;
+  var result=document.getElementById('calc-result');
+  if(!normal){result.style.display='none';return;}
+
+  var youPay=Math.round(normal*(1-supDisc/100));
+  var clientPrice=Math.round(normal*(1-cliDisc/100));
+  var margin=clientPrice-youPay;
+  var marginPct=normal>0?Math.round((margin/normal)*100):0;
+
+  document.getElementById('cr-normal').textContent='R'+normal.toLocaleString('en-ZA');
+  document.getElementById('cr-you-pay').textContent='R'+youPay.toLocaleString('en-ZA');
+  document.getElementById('cr-client-price').textContent='R'+clientPrice.toLocaleString('en-ZA');
+  document.getElementById('cr-margin').textContent='R'+margin.toLocaleString('en-ZA');
+  document.getElementById('cr-margin-pct').textContent='('+marginPct+'% of order)';
+  document.getElementById('cr-quote-amount').textContent=clientPrice.toLocaleString('en-ZA');
+  result.style.display='block';
+}
+
+// ---- PRICE CALCULATOR ----
+function openCalcModal(){
+  document.getElementById('calc-normal-price').value='';
+  document.getElementById('calc-my-discount').value='';
+  document.getElementById('calc-client-discount').value='';
+  document.getElementById('calc-result').style.display='none';
+  // Pre-fill from first supplier account if available
+  if(supplierAccounts.length){
+    document.getElementById('calc-my-discount').value=supplierAccounts[0].discount||'';
+    document.getElementById('calc-client-discount').value=supplierAccounts[0].clientDiscount||'';
+  }
+  document.getElementById('calcModal').style.display='flex';
+}
+
+function runCalc(){
+  var normal=parseFloat(document.getElementById('calc-normal-price').value)||0;
+  var myDisc=parseFloat(document.getElementById('calc-my-discount').value)||0;
+  var clientDisc=parseFloat(document.getElementById('calc-client-discount').value)||0;
+  if(!normal){document.getElementById('calc-result').style.display='none';return;}
+
+  var clientPays=Math.round(normal*(1-(clientDisc/100)));
+  var iPaySupplier=Math.round(normal*(1-(myDisc/100)));
+  var myMargin=clientPays-iPaySupplier;
+  var marginPct=clientPays>0?Math.round((myMargin/clientPays)*100):0;
+
+  document.getElementById('calc-display-normal').textContent='R'+normal.toLocaleString('en-ZA');
+  document.getElementById('calc-display-client').textContent='R'+clientPays.toLocaleString('en-ZA');
+  document.getElementById('calc-display-supplier').textContent='R'+iPaySupplier.toLocaleString('en-ZA');
+  document.getElementById('calc-display-margin').textContent='R'+myMargin.toLocaleString('en-ZA');
+  document.getElementById('calc-display-margin-pct').textContent=marginPct+'% of quote';
+  document.getElementById('calc-display-margin').style.color=myMargin>=0?'#15803d':'#dc2626';
+  document.getElementById('calc-result').style.display='block';
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+['supplierModal','calcModal','paymentModal','quoteBuilderModal'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('click',function(e){
+    if(e.target===this){
+      if(id==='supplierModal')closeSupplierModal();
+      else if(id==='paymentModal')closePaymentModal();
+      else this.style.display='none';
+    }
+  });
+});
+</script>
+
+<!-- QUOTE BUILDER MODAL -->
+<div class="modal-overlay" id="quoteBuilderModal">
+  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto">
+    <div class="modal-title">Build & send quote</div>
+    <div class="modal-body">
+      <input type="hidden" id="qb-order-id" />
+
+      <!-- Client & order info -->
+      <div style="background:#f9fafb;border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Client</div><div style="font-size:14px;font-weight:700" id="qb-client-name"></div><div style="font-size:12px;color:#15803d" id="qb-client-phone"></div></div>
+          <div><div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:3px">Supplier</div><div style="font-size:14px;font-weight:700" id="qb-supplier-name"></div></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9ca3af;margin-bottom:4px">Items requested</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5" id="qb-items"></div>
+        <div style="font-size:12px;color:#6b7280;margin-top:8px">📍 <span id="qb-address"></span></div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px">👤 <span id="qb-contact"></span></div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:10px">Quote details</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row">
+          <label class="form-label">Total amount (R) *</label>
+          <input class="form-input" type="number" id="qb-amount" placeholder="e.g. 3500" oninput="calcQuoteTotal()" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">Client discount (%)</label>
+          <input class="form-input" type="number" id="qb-discount" placeholder="15" oninput="calcQuoteTotal()" />
+        </div>
+      </div>
+
+      <div id="qb-total-display" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px;display:none"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row">
+          <label class="form-label">Estimated delivery (business days)</label>
+          <input class="form-input" id="qb-delivery-days" placeholder="e.g. 3-5" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">Quote valid for (days)</label>
+          <input class="form-input" type="number" id="qb-validity" placeholder="3" value="3" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Additional notes to client</label>
+        <textarea class="form-input" id="qb-notes" rows="2" placeholder="e.g. Price excludes delivery, brand substitution may apply" style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" onclick="document.getElementById('quoteBuilderModal').style.display='none'">Cancel</button>
+      <button class="btn-primary" onclick="sendQuoteWhatsApp()">💬 Send quote on WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECORD PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">Record payment</div>
+    <div class="modal-body">
+      <input type="hidden" id="pm-order-id" />
+      <div id="pm-order-info" style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#374151"></div>
+
+      <div class="form-row">
+        <label class="form-label">Amount client paid you (R) *</label>
+        <input class="form-input" type="number" id="pm-client-paid" placeholder="e.g. 2550" oninput="calcPaymentSplit()" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Amount you pay supplier (R) *</label>
+        <input class="form-input" type="number" id="pm-supplier-cost" placeholder="e.g. 2400" oninput="calcPaymentSplit()" />
+        <div style="font-size:11px;color:#9ca3af;margin-top:4px">This is what the supplier will invoice you at your trade discount</div>
+      </div>
+
+      <div id="pm-split-display" style="display:none;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          <div style="background:#f9fafb;border-radius:8px;padding:10px;text-align:center;border:1px solid #e5e7eb">
+            <div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:4px">Client paid</div>
+            <div style="font-size:18px;font-weight:800;color:#111827" id="pm-display-paid">R0</div>
+          </div>
+          <div style="background:#fef2f2;border-radius:8px;padding:10px;text-align:center;border:1px solid #fecaca">
+            <div style="font-size:10px;color:#dc2626;font-weight:600;text-transform:uppercase;margin-bottom:4px">To supplier</div>
+            <div style="font-size:18px;font-weight:800;color:#dc2626" id="pm-display-supplier">R0</div>
+          </div>
+          <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;border:1px solid #bbf7d0">
+            <div style="font-size:10px;color:#15803d;font-weight:600;text-transform:uppercase;margin-bottom:4px">Your margin</div>
+            <div style="font-size:18px;font-weight:800;color:#15803d" id="pm-display-margin">R0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Payment date</label>
+        <input class="form-input" type="date" id="pm-date" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Supplier payment due date</label>
+        <input class="form-input" type="date" id="pm-supplier-due" />
+        <div style="font-size:11px;color:#9ca3af;margin-top:4px">Based on your payment terms — this is when you need to pay the supplier</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Payment reference / notes</label>
+        <input class="form-input" id="pm-reference" placeholder="e.g. EFT ref 12345, Yoco payment" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" onclick="closePaymentModal()">Cancel</button>
+      <button class="btn-primary" onclick="savePayment()">Save payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE CALCULATOR -->
+
+
+<!-- PRICE CALCULATOR MODAL -->
+<div class="modal-overlay" id="calcModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">🧮 Price calculator</div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:#6b7280;margin-bottom:16px;line-height:1.5">
+        Enter the supplier's normal price and your discount percentages to calculate what to charge the client.
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Supplier normal price (R) *</label>
+        <input class="form-input" type="number" id="calc-normal-price" placeholder="e.g. 10000" oninput="runCalc()" />
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Supplier gives me (%)</label>
+          <input class="form-input" type="number" id="calc-my-discount" placeholder="e.g. 20" oninput="runCalc()" />
+          <div style="font-size:11px;color:#9ca3af;margin-top:3px">Your trade account discount</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Client gets (%)</label>
+          <input class="form-input" type="number" id="calc-client-discount" placeholder="e.g. 15" oninput="runCalc()" />
+          <div style="font-size:11px;color:#9ca3af;margin-top:3px">What you show the client</div>
+        </div>
+      </div>
+
+      <div id="calc-result" style="display:none;margin-top:8px">
+        <div style="display:grid;grid-template-columns:1fr;gap:8px">
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #e5e7eb">
+              <span style="font-size:13px;color:#6b7280">Normal price</span>
+              <span style="font-size:14px;font-weight:700;color:#9ca3af;text-decoration:line-through" id="calc-display-normal">R0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:13px;color:#374151">Quote client at</span>
+              <span style="font-size:20px;font-weight:800;color:#111827" id="calc-display-client">R0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:13px;color:#dc2626">You pay supplier</span>
+              <span style="font-size:16px;font-weight:700;color:#dc2626" id="calc-display-supplier">R0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #e5e7eb">
+              <span style="font-size:13px;color:#15803d;font-weight:600">Your margin</span>
+              <div style="text-align:right">
+                <div style="font-size:20px;font-weight:800;color:#15803d" id="calc-display-margin">R0</div>
+                <div style="font-size:11px;color:#15803d" id="calc-display-margin-pct">0% of quote</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="document.getElementById('calcModal').style.display='none'">Done</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

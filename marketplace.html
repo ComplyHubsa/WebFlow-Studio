@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vensource — SA Trade Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f4f5f7;color:#111827;font-size:14px;-webkit-font-smoothing:antialiased}
+
+/* ---- AUTH ---- */
+.auth-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0d1b2a;padding:20px;z-index:500}
+.auth-box{background:white;border-radius:16px;padding:40px;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+.auth-logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;color:#111827;margin-bottom:4px;letter-spacing:-0.02em}
+.auth-logo-icon{width:32px;height:32px;background:#16a34a;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.auth-sub{font-size:13px;color:#6b7280;margin-bottom:24px}
+.auth-tabs{display:flex;gap:0;margin-bottom:24px;background:#f4f5f7;padding:3px;border-radius:8px}
+.auth-tab{flex:1;padding:8px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#6b7280;transition:all 0.15s}
+.auth-tab.active{background:white;color:#111827;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.form-input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;margin-bottom:12px;background:white;color:#111827;transition:border 0.15s;font-family:inherit}
+.form-input:focus{border-color:#16a34a}
+.form-label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+.form-row{margin-bottom:12px}
+.btn-primary{width:100%;padding:12px;background:#16a34a;color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.btn-primary:hover{background:#15803d}
+.auth-error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:none}
+.auth-success{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:none}
+.back-link{text-align:center;margin-top:16px;font-size:13px;color:#6b7280}
+.back-link a{color:#16a34a;font-weight:600;cursor:pointer;text-decoration:none}
+
+/* ---- MAIN APP ---- */
+.app{display:none;background:#f4f5f7}
+.topnav{background:#0d1b2a;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topnav-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:white;letter-spacing:-0.02em}
+.topnav-logo-icon{width:26px;height:26px;background:#16a34a;border-radius:5px;display:flex;align-items:center;justify-content:center}
+.topnav-badge{background:#1d4ed8;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:0.05em}
+.topnav-right{display:flex;align-items:center;gap:12px}
+.topnav-user{font-size:13px;color:rgba(255,255,255,0.6)}
+.topnav-logout{background:rgba(255,255,255,0.1);color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.topnav-cart{background:#16a34a;color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+
+.main-content{max-width:1100px;margin:0 auto;padding:16px 20px}
+
+/* ---- HERO ---- */
+.hero{background:linear-gradient(135deg,#0d1b2a 0%,#112240 100%);border-radius:16px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(59,130,246,0.15);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-20px;right:60px;width:120px;height:120px;background:rgba(59,130,246,0.08);border-radius:50%}
+.hero-title{font-size:20px;font-weight:800;color:white;letter-spacing:-0.03em;margin-bottom:4px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:12px;line-height:1.5;max-width:500px}
+.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
+.hero-stat{text-align:left}
+.hero-stat-num{font-size:22px;font-weight:800;color:#60a5fa}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,0.5);margin-top:1px}
+
+/* ---- FILTERS ---- */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:7px 14px;border-radius:100px;border:1px solid #e5e7eb;background:white;font-size:12px;font-weight:600;cursor:pointer;color:#6b7280;transition:all 0.15s}
+.filter-btn.active{background:#1e3a5f;color:white;border-color:#1e3a5f}
+.search-input{padding:8px 14px;border:1px solid #e5e7eb;border-radius:100px;font-size:13px;outline:none;background:white;min-width:200px;font-family:inherit;margin-left:auto}
+.search-input:focus{border-color:#16a34a}
+
+/* ---- SUPPLIER GRID ---- */
+.supplier-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px}
+.supplier-card{background:white;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s}
+.supplier-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+.supplier-card-header{padding:16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:12px}
+.supplier-logo{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.supplier-card-body{padding:16px}
+.supplier-discount{display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:700;padding:4px 10px;border-radius:100px;margin-bottom:10px}
+.supplier-desc{font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:12px}
+.supplier-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{background:#f3f4f6;color:#374151;font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px}
+.supplier-card-footer{display:flex;gap:8px}
+.btn-order{flex:1;background:#16a34a;color:white;border:none;padding:9px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.btn-order:hover{background:#15803d}
+.btn-info{background:#f3f4f6;color:#374151;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+
+/* ---- ORDER MODAL ---- */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal{background:white;border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-header{padding:20px 24px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700;color:#111827}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#9ca3af;padding:0 4px}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid #e5e7eb;display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{background:#f3f4f6;color:#374151;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.order-summary{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:16px}
+.order-line{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.order-line:last-child{margin-bottom:0;font-weight:700;font-size:14px;border-top:1px solid #bbf7d0;padding-top:8px;margin-top:8px}
+
+/* ---- MY ORDERS ---- */
+.orders-empty{text-align:center;padding:40px 20px;color:#9ca3af;font-size:13px}
+.order-card{background:white;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:12px}
+.order-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px}
+.status-pending{background:#fef9c3;color:#854d0e}
+.status-confirmed{background:#eff6ff;color:#1d4ed8}
+.status-delivered{background:#f0fdf4;color:#15803d}
+.status-cancelled{background:#fef2f2;color:#dc2626}
+
+/* ---- CART ---- */
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f3f4f6}
+.cart-empty{text-align:center;padding:32px;color:#9ca3af;font-size:13px}
+
+/* ---- TABS ---- */
+.page-tabs{display:flex;gap:4px;margin-bottom:20px;background:white;border:1px solid #e5e7eb;border-radius:10px;padding:4px;width:fit-content}
+.page-tab{padding:7px 18px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#6b7280;transition:all 0.15s}
+.page-tab.active{background:#1e3a5f;color:white}
+
+/* ---- SECTION HEADERS ---- */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-title{font-size:16px;font-weight:700;color:#111827;letter-spacing:-0.01em}
+.section-sub{font-size:12px;color:#9ca3af;margin-top:2px}
+
+.badge-green{background:#f0fdf4;color:#15803d;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-amber{background:#fffbeb;color:#d97706;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ========== AUTH SCREEN ========== -->
+<div class="auth-screen" id="authScreen" style="display:none">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      ComplyHub
+      <span style="background:#f0fdf4;color:#15803d;font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:4px">Marketplace</span>
+    </div>
+    <div class="auth-sub">Access exclusive supplier deals for your business — free forever.</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign in</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create account</button>
+    </div>
+
+    <div id="authError" class="auth-error"></div>
+    <div id="authSuccess" class="auth-success"></div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="form-row">
+        <label class="form-label">Email address</label>
+        <input class="form-input" type="email" id="loginEmail" placeholder="you@business.co.za" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="loginPassword" placeholder="Your password" onkeydown="if(event.key==='Enter')doMarketplaceLogin()" />
+      </div>
+      <button class="btn-primary" onclick="doMarketplaceLogin()">Sign in →</button>
+      <div class="back-link" style="margin-top:16px">
+        Also a ComplyHub client? <a href="index.html">Go to ComplyHub →</a>
+      </div>
+      <div style="text-align:center;margin-top:12px">
+        <button onclick="browseWithoutLogin()" style="background:none;border:none;color:#6b7280;font-size:13px;cursor:pointer;text-decoration:underline">Browse deals without an account →</button>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signupForm" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row">
+          <label class="form-label">Full name *</label>
+          <input class="form-input" id="su-name" placeholder="John Smith" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">Business name *</label>
+          <input class="form-input" id="su-business" placeholder="Smith Plumbing" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">WhatsApp number * <span style="color:#6b7280;font-weight:400">(required for order updates)</span></label>
+        <input class="form-input" id="su-phone" placeholder="+27 82 000 0000" type="tel" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Industry / Trade</label>
+        <select class="form-input" id="su-industry">
+          <option value="">— Select your trade —</option>
+          <option>Plumbing</option>
+          <option>Electrical</option>
+          <option>Construction</option>
+          <option>Retail</option>
+          <option>Transport & Logistics</option>
+          <option>Food & Hospitality</option>
+          <option>Manufacturing</option>
+          <option>Professional Services</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Email address *</label>
+        <input class="form-input" type="email" id="su-email" placeholder="you@business.co.za" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row">
+          <label class="form-label">Password *</label>
+          <input class="form-input" type="password" id="su-pass" placeholder="Min. 6 characters" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">Confirm password *</label>
+          <input class="form-input" type="password" id="su-pass2" placeholder="Repeat password" />
+        </div>
+      </div>
+      <button class="btn-primary" onclick="doMarketplaceSignup()">Create free account →</button>
+      <div style="font-size:11px;color:#9ca3af;text-align:center;margin-top:10px">Free forever · No credit card required · Cancel anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAIN APP ========== -->
+<div class="app" id="marketplaceApp" style="display:block">
+
+  <!-- Top nav -->
+  <div class="topnav">
+    <div class="topnav-logo">
+      <div class="topnav-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      Vensource
+      <span class="topnav-badge">SA TRADE NETWORK</span>
+    </div>
+    class="topnav-right">
+      <span class="topnav-user" id="navUserName"></span>
+      <button class="topnav-cart" id="cartBtn" onclick="showTab('cart')" style="display:none">
+        🛒 Cart <span id="cartCount" style="background:white;color:#16a34a;border-radius:100px;padding:1px 6px;font-size:11px">0</span>
+      </button>
+      <button id="signupNavBtn" onclick="openAuthModal('signup')" style="background:#16a34a;color:white;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Sign up free</button>
+      <button id="loginNavBtn" onclick="openAuthModal('login')" style="background:rgba(255,255,255,0.1);color:white;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Sign in</button>
+      <button id="logoutNavBtn" onclick="doLogout()" style="display:none;background:rgba(255,255,255,0.1);color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Logout</button></div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-title">Vensource — Better prices. Better business. 🇿🇦</div>
+      <div class="hero-sub">Access negotiated supplier discounts that only large corporates used to get. Buy through ComplyHub and save 10–20% on your regular supplies.</div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num" id="stat-suppliers">0</div><div class="hero-stat-label">Verified suppliers</div></div>
+        <div class="hero-stat"><div class="hero-stat-num" id="stat-savings">0%</div><div class="hero-stat-label">Average saving</div></div>
+        <div class="hero-stat"><div class="hero-stat-num" id="stat-members">0</div><div class="hero-stat-label">Business members</div></div>
+      </div>
+    </div>
+
+    <!-- Page tabs -->
+    <div class="page-tabs">
+      <button class="page-tab active" id="ptab-browse" onclick="showTab('browse')">Browse deals</button>
+      <button class="page-tab" id="ptab-orders" onclick="showTab('orders')">My orders</button>
+      <button class="page-tab" id="ptab-cart" onclick="showTab('cart')">Cart <span id="cartBadge" style="display:none;background:#dc2626;color:white;border-radius:100px;padding:1px 6px;font-size:10px;margin-left:2px">0</span></button>
+    </div>
+
+    <!-- BROWSE TAB -->
+    <div id="tab-browse">
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All trades</button>
+        <button class="filter-btn" onclick="setFilter('Plumbing',this)">🔧 Plumbing</button>
+        <button class="filter-btn" onclick="setFilter('Electrical',this)">⚡ Electrical</button>
+        <button class="filter-btn" onclick="setFilter('Construction',this)">🏗️ Construction</button>
+        <button class="filter-btn" onclick="setFilter('Safety & PPE',this)">🦺 Safety</button>
+        <button class="filter-btn" onclick="setFilter('General supplies',this)">📦 General</button>
+        <input class="search-input" id="supplierSearch" placeholder="🔍 Search suppliers..." oninput="renderSupplierCards()" />
+      </div>
+      <div class="supplier-grid" id="supplierGrid"></div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="tab-orders" style="display:none">
+      <div class="section-header">
+        <div>
+          <div class="section-title">My orders</div>
+          <div class="section-sub">Track all your orders placed through ComplyHub Marketplace</div>
+        </div>
+      </div>
+      <div id="ordersList"></div>
+    </div>
+
+    <!-- CART TAB -->
+    <div id="tab-cart" style="display:none">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Your cart</div>
+          <div class="section-sub">Review items before placing your order</div>
+        </div>
+      </div>
+      <div id="cartList"></div>
+      <div id="cartSummary" style="display:none;margin-top:16px">
+        <div style="background:white;border:1px solid #e5e7eb;border-radius:12px;padding:20px;max-width:380px;margin-left:auto">
+          <div class="order-line"><span style="color:#6b7280">Subtotal (excl. discount)</span><span id="cartSubtotal">R0</span></div>
+          <div class="order-line"><span style="color:#15803d">Your savings</span><span style="color:#15803d" id="cartSavings">-R0</span></div>
+          <div class="order-line"><span>Total to pay</span><span id="cartTotal">R0</span></div>
+          <button class="btn-primary" style="margin-top:16px" onclick="placeOrder()">Place order →</button>
+          <div style="font-size:11px;color:#9ca3af;text-align:center;margin-top:8px">We'll contact you on WhatsApp to confirm and arrange payment</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QUOTE REQUEST MODAL -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div class="modal-title" id="orderModalTitle">Request a quote</div>
+      <button class="modal-close" onclick="closeOrderModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="order-supplier-id" />
+      <div id="orderModalSupplierInfo" style="background:#f9fafb;border-radius:10px;padding:14px;margin-bottom:16px"></div>
+
+      <div class="form-row">
+        <label class="form-label">What do you need? * <span style="color:#9ca3af;font-weight:400">(be as specific as possible)</span></label>
+        <textarea class="form-input" id="order-items" rows="4" placeholder="e.g. 50x 15mm copper pipes, 20x gate valves 3/4 inch, 100x compression fittings — include quantities, sizes and any brand preferences" style="resize:vertical"></textarea>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin:14px 0 8px">Delivery details</div>
+
+      <div class="form-row">
+        <label class="form-label">Street address * <span style="color:#dc2626">required</span></label>
+        <input class="form-input" id="order-street" placeholder="e.g. 12 Main Street" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row">
+          <label class="form-label">Suburb * <span style="color:#dc2626">required</span></label>
+          <input class="form-input" id="order-suburb" placeholder="e.g. Sandton" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">City * <span style="color:#dc2626">required</span></label>
+          <input class="form-input" id="order-city" placeholder="e.g. Johannesburg" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row">
+          <label class="form-label">Province * <span style="color:#dc2626">required</span></label>
+          <select class="form-input" id="order-province">
+            <option value="">— Select province —</option>
+            <option>Gauteng</option>
+            <option>Western Cape</option>
+            <option>KwaZulu-Natal</option>
+            <option>Eastern Cape</option>
+            <option>Limpopo</option>
+            <option>Mpumalanga</option>
+            <option>North West</option>
+            <option>Free State</option>
+            <option>Northern Cape</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Postal code *</label>
+          <input class="form-input" id="order-postal" placeholder="e.g. 2196" maxlength="4" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Contact person on site * <span style="color:#dc2626">required</span></label>
+        <input class="form-input" id="order-contact-person" placeholder="Name of person receiving delivery" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Contact phone number * <span style="color:#dc2626">required</span></label>
+        <input class="form-input" id="order-contact-phone" placeholder="+27 82 000 0000" type="tel" />
+      </div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin:14px 0 8px">Scheduling</div>
+      <div class="form-row">
+        <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="order-schedule" onchange="toggleSchedule()" style="width:15px;height:15px" />
+          I need delivery on a specific date
+        </label>
+      </div>
+      <div id="schedule-date-row" style="display:none">
+        <div class="form-row">
+          <label class="form-label">Preferred delivery date</label>
+          <input class="form-input" type="date" id="order-date" />
+          <div style="font-size:11px;color:#9ca3af;margin-top:4px">We'll confirm availability with the supplier. Dates are not guaranteed.</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Additional notes</label>
+        <textarea class="form-input" id="order-notes" rows="2" placeholder="Special access instructions, site requirements, brand preferences, etc." style="resize:vertical"></textarea>
+      </div>
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;font-size:13px;color:#1d4ed8;line-height:1.6;margin-top:4px">
+        📋 We'll send you a quote on WhatsApp within a few hours. Once you approve the price, we'll send a payment link and process your order.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeOrderModal()">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="submitOrder()">Request quote →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIER INFO MODAL -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="infoModalTitle">Supplier details</div>
+      <button class="modal-close" onclick="document.getElementById('infoModal').style.display='none'">×</button>
+    </div>
+    <div class="modal-body" id="infoModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('infoModal').style.display='none'">Close</button>
+      <button class="btn-primary" style="width:auto;padding:9px 24px" id="infoModalOrderBtn">Order from this supplier →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ---- SUPABASE CONFIG ----
+const SUPABASE_URL='https://jfeybsttmiihfkghifmc.supabase.co';
+const SUPABASE_KEY='sb_publishable_9uwUoeDO8MlKSOTmqUVLiA_TAx3uiIu';
+
+// ---- STATE ----
+let currentUser=null;
+let cart=[];
+let currentFilter='all';
+let suppliers=[];
+let orders=[];
+
+// ---- AUTO INIT - open straight to marketplace ----
+window.addEventListener('load', async function(){
+  // Load suppliers from Supabase first, fall back to static if none
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/supplier_accounts?active=eq.true&order=created_at.desc&select=*',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    var dbSups=await r.json();
+    if(Array.isArray(dbSups)&&dbSups.length>0){
+      suppliers=dbSups.map(function(s){
+        return{
+          id:s.id,
+          name:s.name,
+          category:s.category||'General',
+          emoji:getCategoryEmoji(s.category),
+          color:getCategoryColor(s.category),
+          discount:s.client_discount||s.discount||0,
+          minOrder:2000,
+          desc:s.notes||'Negotiated group discount for Vensource members.',
+          tags:[s.category||'Supplies'],
+          turnaround:'Contact for details',
+          contact:'orders@vensource.co.za',
+          terms:s.terms||'Payment upfront.'
+        };
+      });
+    }else{
+      suppliers=STATIC_SUPPLIERS;
+    }
+  }catch(e){
+    suppliers=STATIC_SUPPLIERS;
+  }
+  renderSupplierCards();
+  updateHeroStats();
+  showTab('browse');
+  updateNavState();
+});
+
+function getCategoryEmoji(cat){
+  var map={Plumbing:'🔧',Electrical:'⚡',Construction:'🏗️','Safety & PPE':'🦺','General supplies':'📦',Other:'🏭'};
+  return map[cat]||'🏭';
+}
+function getCategoryColor(cat){
+  var map={Plumbing:'#eff6ff',Electrical:'#fdf6e3',Construction:'#fff7ed','Safety & PPE':'#fef9c3','General supplies':'#f9fafb',Other:'#f9fafb'};
+  return map[cat]||'#f9fafb';
+}
+
+function updateNavState(){
+  var loggedIn=!!currentUser;
+  var cartBtn=document.getElementById('cartBtn');
+  var signupBtn=document.getElementById('signupNavBtn');
+  var loginBtn=document.getElementById('loginNavBtn');
+  var logoutBtn=document.getElementById('logoutNavBtn');
+  var ordersTab=document.getElementById('ptab-orders');
+  var cartTab=document.getElementById('ptab-cart');
+  if(cartBtn)cartBtn.style.display=loggedIn?'flex':'none';
+  if(signupBtn)signupBtn.style.display=loggedIn?'none':'inline-block';
+  if(loginBtn)loginBtn.style.display=loggedIn?'none':'inline-block';
+  if(logoutBtn)logoutBtn.style.display=loggedIn?'inline-block':'none';
+  if(ordersTab)ordersTab.style.display=loggedIn?'':'none';
+  if(cartTab)cartTab.style.display=loggedIn?'':'none';
+  var navUser=document.getElementById('navUserName');
+  if(navUser)navUser.textContent=loggedIn?(currentUser.name||currentUser.email):'';
+}
+
+function openAuthModal(tab){
+  switchModalTab(tab||'signup');
+  document.getElementById('modalAuthError').style.display='none';
+  document.getElementById('authModal').style.display='flex';
+}
+
+function switchModalTab(tab){
+  document.getElementById('modal-tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('modal-tab-signup').classList.toggle('active',tab==='signup');
+  document.getElementById('modalLoginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('modalSignupForm').style.display=tab==='signup'?'block':'none';
+}
+
+async function doModalLogin(){
+  var email=document.getElementById('m-loginEmail').value.trim().toLowerCase();
+  var pass=document.getElementById('m-loginPassword').value;
+  var err=document.getElementById('modalAuthError');
+  err.style.display='none';
+  if(!email||!pass){err.textContent='Please enter email and password.';err.style.display='block';return;}
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users?email=eq.'+encodeURIComponent(email)+'&select=*&limit=1',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    var data=await r.json();
+    if(!Array.isArray(data)||!data.length||data[0].password!==pass){
+      err.textContent='Email or password incorrect.';err.style.display='block';return;
+    }
+    currentUser=data[0];
+    document.getElementById('authModal').style.display='none';
+    var savedCart=localStorage.getItem('mkt_cart_'+currentUser.id);
+    if(savedCart)try{cart=JSON.parse(savedCart);}catch(e){cart=[];}
+    updateNavState();
+    updateCartCount();
+    await loadOrders();
+    showToast('Welcome back, '+currentUser.name+'!');
+    // If they were trying to order, reopen the order modal
+    if(pendingOrderSupplierId){
+      var sid=pendingOrderSupplierId;
+      pendingOrderSupplierId=null;
+      openOrderModal(sid);
+    }
+  }catch(e){err.textContent='Connection error.';err.style.display='block';}
+}
+
+async function doModalSignup(){
+  var name=document.getElementById('m-su-name').value.trim();
+  var business=document.getElementById('m-su-business').value.trim();
+  var phone=document.getElementById('m-su-phone').value.trim();
+  var email=document.getElementById('m-su-email').value.trim().toLowerCase();
+  var pass=document.getElementById('m-su-pass').value;
+  var pass2=document.getElementById('m-su-pass2').value;
+  var industry=document.getElementById('m-su-industry').value;
+  var err=document.getElementById('modalAuthError');
+  err.style.display='none';
+  if(!name||!business||!phone||!email||!pass){err.textContent='Please fill in all required fields.';err.style.display='block';return;}
+  if(phone.replace(/[^0-9]/g,'').length<9){err.textContent='Please enter a valid WhatsApp number.';err.style.display='block';return;}
+  if(pass.length<6){err.textContent='Password must be at least 6 characters.';err.style.display='block';return;}
+  if(pass!==pass2){err.textContent='Passwords do not match.';err.style.display='block';return;}
+  try{
+    var check=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users?email=eq.'+encodeURIComponent(email)+'&select=id&limit=1',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    var existing=await check.json();
+    if(Array.isArray(existing)&&existing.length){err.textContent='Account already exists. Please sign in.';err.style.display='block';return;}
+    var r=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({name,business_name:business,phone,email,password:pass,industry:industry||null,created_at:new Date().toISOString()})
+    });
+    var newUser=await r.json();
+    if(Array.isArray(newUser)&&newUser.length){
+      currentUser=newUser[0];
+      document.getElementById('authModal').style.display='none';
+      updateNavState();
+      updateCartCount();
+      showToast('Welcome to ComplyHub Marketplace, '+name+'!');
+      if(pendingOrderSupplierId){
+        var sid=pendingOrderSupplierId;
+        pendingOrderSupplierId=null;
+        openOrderModal(sid);
+      }
+    }else{err.textContent='Could not create account. Try again.';err.style.display='block';}
+  }catch(e){err.textContent='Error: '+e.message;err.style.display='block';}
+}
+
+var pendingOrderSupplierId=null;
+
+// ---- SUPPLIER DATA ---- (static for now, will be DB-driven)
+const STATIC_SUPPLIERS=[];
+
+// ---- AUTH ----
+function switchAuthTab(tab){
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('signupForm').style.display=tab==='signup'?'block':'none';
+  document.getElementById('authError').style.display='none';
+  document.getElementById('authSuccess').style.display='none';
+}
+
+async function doMarketplaceLogin(){
+  var email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  var pass=document.getElementById('loginPassword').value;
+  var err=document.getElementById('authError');
+  err.style.display='none';
+  if(!email||!pass){err.textContent='Please enter your email and password.';err.style.display='block';return;}
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users?email=eq.'+encodeURIComponent(email)+'&select=*&limit=1',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    var data=await r.json();
+    if(!Array.isArray(data)||!data.length||data[0].password!==pass){
+      err.textContent='Email or password is incorrect.';err.style.display='block';return;
+    }
+    currentUser=data[0];
+    loadMarketplaceApp();
+  }catch(e){err.textContent='Connection error. Please try again.';err.style.display='block';}
+}
+
+async function doMarketplaceSignup(){
+  var name=document.getElementById('su-name').value.trim();
+  var business=document.getElementById('su-business').value.trim();
+  var phone=document.getElementById('su-phone').value.trim();
+  var email=document.getElementById('su-email').value.trim().toLowerCase();
+  var pass=document.getElementById('su-pass').value;
+  var pass2=document.getElementById('su-pass2').value;
+  var industry=document.getElementById('su-industry').value;
+  var err=document.getElementById('authError');
+  var ok=document.getElementById('authSuccess');
+  err.style.display='none';ok.style.display='none';
+  if(!name||!business||!phone||!email||!pass){err.textContent='Please fill in all required fields.';err.style.display='block';return;}
+  if(!phone||phone.replace(/[^0-9]/g,'').length<9){err.textContent='Please enter a valid WhatsApp number.';err.style.display='block';return;}
+  if(pass.length<6){err.textContent='Password must be at least 6 characters.';err.style.display='block';return;}
+  if(pass!==pass2){err.textContent='Passwords do not match.';err.style.display='block';return;}
+  try{
+    // Check if email already exists
+    var check=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users?email=eq.'+encodeURIComponent(email)+'&select=id&limit=1',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    var existing=await check.json();
+    if(Array.isArray(existing)&&existing.length){err.textContent='An account with this email already exists. Please sign in.';err.style.display='block';return;}
+    // Create account
+    var r=await fetch(SUPABASE_URL+'/rest/v1/marketplace_users',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({name,business_name:business,phone,email,password:pass,industry:industry||null,created_at:new Date().toISOString()})
+    });
+    var newUser=await r.json();
+    if(Array.isArray(newUser)&&newUser.length){
+      currentUser=newUser[0];
+      loadMarketplaceApp();
+    }else{
+      err.textContent='Could not create account. Please try again.';err.style.display='block';
+    }
+  }catch(e){err.textContent='Connection error: '+e.message;err.style.display='block';}
+}
+
+function doLogout(){
+  currentUser=null;cart=[];
+  updateNavState();
+  updateCartCount();
+  showTab('browse');
+  showToast('You have been signed out.');
+}
+
+function browseWithoutLogin(){
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('marketplaceApp').style.display='block';
+  document.getElementById('navUserName').textContent='Guest';
+  // Hide cart and orders for guests
+  document.getElementById('ptab-orders').style.display='none';
+  document.getElementById('ptab-cart').style.display='none';
+  var cartBtn=document.querySelector('.topnav-cart');
+  if(cartBtn)cartBtn.style.display='none';
+  // Show sign in button instead
+  var logoutBtn=document.querySelector('.topnav-logout');
+  if(logoutBtn){logoutBtn.textContent='Sign in / Sign up';logoutBtn.onclick=function(){
+    document.getElementById('marketplaceApp').style.display='none';
+    document.getElementById('authScreen').style.display='flex';
+    // Restore tabs
+    document.getElementById('ptab-orders').style.display='';
+    document.getElementById('ptab-cart').style.display='';
+    if(cartBtn)cartBtn.style.display='';
+  };}
+  suppliers=STATIC_SUPPLIERS;
+  renderSupplierCards();
+  updateHeroStats();
+  showTab('browse');
+}
+
+// ---- LOAD APP ----
+async function loadMarketplaceApp(){
+  if(currentUser){
+    var savedCart=localStorage.getItem('mkt_cart_'+currentUser.id);
+    if(savedCart)try{cart=JSON.parse(savedCart);}catch(e){cart=[];}
+    await loadOrders();
+  }
+  updateNavState();
+  updateCartCount();
+}
+
+function updateHeroStats(){
+  document.getElementById('stat-suppliers').textContent=suppliers.length;
+  var avgDiscount=Math.round(suppliers.reduce(function(s,x){return s+x.discount;},0)/suppliers.length);
+  document.getElementById('stat-savings').textContent=avgDiscount+'%';
+  document.getElementById('stat-members').textContent=Math.floor(Math.random()*50)+87; // will be real DB count later
+}
+
+// ---- TABS ----
+function showTab(tab){
+  ['browse','orders','cart'].forEach(function(t){
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+    var btn=document.getElementById('ptab-'+t);
+    if(btn)btn.classList.toggle('active',t===tab);
+  });
+  if(tab==='orders')renderOrders();
+  if(tab==='cart')renderCart();
+}
+
+// ---- FILTERS ----
+function setFilter(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderSupplierCards();
+}
+
+// ---- RENDER SUPPLIERS ----
+function renderSupplierCards(){
+  var el=document.getElementById('supplierGrid');if(!el)return;
+  var search=(document.getElementById('supplierSearch')?document.getElementById('supplierSearch').value||'':'').toLowerCase();
+  var filtered=suppliers.filter(function(s){
+    var matchCat=currentFilter==='all'||s.category===currentFilter;
+    var matchSearch=!search||s.name.toLowerCase().includes(search)||s.desc.toLowerCase().includes(search)||s.tags.some(function(t){return t.toLowerCase().includes(search);});
+    return matchCat&&matchSearch;
+  });
+  if(!filtered.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9ca3af;font-size:13px">No suppliers found for this category yet. More coming soon!</div>';return;}
+  el.innerHTML=filtered.map(function(s){
+    return '<div class="supplier-card">'
+      +'<div class="supplier-card-header" style="background:'+s.color+'">'
+      +'<div class="supplier-logo" style="background:white;font-size:22px">'+s.emoji+'</div>'
+      +'<div>'
+      +'<div style="font-size:15px;font-weight:700;color:#111827">'+s.name+'</div>'
+      +'<div style="font-size:12px;color:#6b7280">'+s.category+'</div>'
+      +'</div>'
+      +'<div style="margin-left:auto"><span class="supplier-discount">🎯 '+s.discount+'% off</span></div>'
+      +'</div>'
+      +'<div class="supplier-card-body">'
+      +'<div class="supplier-desc">'+s.desc+'</div>'
+      +'<div class="supplier-tags">'+s.tags.slice(0,4).map(function(t){return'<span class="tag">'+t+'</span>';}).join('')+'</div>'
+      +'<div style="font-size:12px;color:#6b7280;margin-bottom:14px">⚡ '+s.turnaround+' · Min order: R'+s.minOrder.toLocaleString('en-ZA')+'</div>'
+      +'<div class="supplier-card-footer">'
+      +'<button class="btn-order" data-sid="'+s.id+'" onclick="openOrderModal(this.dataset.sid)">Get quote →</button>'
+      +'<button class="btn-info" data-sid="'+s.id+'" onclick="openInfoModal(this.dataset.sid)">Details</button>'
+      +'</div></div></div>';
+  }).join('');
+}
+
+// ---- ORDER MODAL ----
+var currentOrderSupplier=null;
+function openOrderModal(sid){
+  // Require login to place orders
+  if(!currentUser){
+    pendingOrderSupplierId=sid;
+    openAuthModal('signup');
+    return;
+  }
+  currentOrderSupplier=suppliers.find(function(s){return s.id===sid;});
+  if(!currentOrderSupplier)return;
+  document.getElementById('orderModalTitle').textContent='Order from '+currentOrderSupplier.name;
+  document.getElementById('order-supplier-id').value=sid;
+  document.getElementById('orderModalSupplierInfo').innerHTML=
+    '<div style="display:flex;align-items:center;gap:10px">'
+    +'<div style="font-size:24px">'+currentOrderSupplier.emoji+'</div>'
+    +'<div><div style="font-weight:700;font-size:14px">'+currentOrderSupplier.name+'</div>'
+    +'<div style="font-size:12px;color:#6b7280">'+currentOrderSupplier.discount+'% group discount applied automatically</div></div>'
+    +'<div style="margin-left:auto;background:#f0fdf4;color:#15803d;font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px">'+currentOrderSupplier.discount+'% OFF</div>'
+    +'</div>';
+  ['order-items','order-street','order-suburb','order-city','order-postal',
+   'order-contact-person','order-contact-phone','order-notes','order-date'].forEach(function(fid){
+    var el=document.getElementById(fid);if(el)el.value='';
+  });
+  var prov=document.getElementById('order-province');if(prov)prov.value='';
+  var sched=document.getElementById('order-schedule');if(sched)sched.checked=false;
+  var schedRow=document.getElementById('schedule-date-row');if(schedRow)schedRow.style.display='none';
+  document.getElementById('orderModal').style.display='flex';
+}
+function closeOrderModal(){document.getElementById('orderModal').style.display='none';currentOrderSupplier=null;}
+
+function updateOrderSummary(){
+  if(!currentOrderSupplier)return;
+  var val=parseFloat(document.getElementById('order-value').value)||0;
+  if(!val){document.getElementById('orderSummaryBox').style.display='none';return;}
+  var discount=val*(currentOrderSupplier.discount/100);
+  var total=val-discount;
+  document.getElementById('os-value').textContent='R'+val.toLocaleString('en-ZA');
+  document.getElementById('os-discount').textContent='-R'+Math.round(discount).toLocaleString('en-ZA');
+  document.getElementById('os-total').textContent='R'+Math.round(total).toLocaleString('en-ZA');
+  document.getElementById('orderSummaryBox').style.display='block';
+}
+
+async function submitOrder(){
+  if(!currentOrderSupplier)return;
+  var items=document.getElementById('order-items').value.trim();
+  var street=document.getElementById('order-street').value.trim();
+  var suburb=document.getElementById('order-suburb').value.trim();
+  var city=document.getElementById('order-city').value.trim();
+  var province=document.getElementById('order-province').value;
+  var postal=document.getElementById('order-postal').value.trim();
+  var contactPerson=document.getElementById('order-contact-person').value.trim();
+  var contactPhone=document.getElementById('order-contact-phone').value.trim();
+  var notes=document.getElementById('order-notes').value.trim();
+  var schedDate=document.getElementById('order-schedule').checked?document.getElementById('order-date').value:'';
+
+  if(!items){alert('Please describe what you need.');return;}
+  if(!street||!suburb||!city||!province){alert('Please fill in your full delivery address.');return;}
+  if(!contactPerson||!contactPhone){alert('Please provide a contact person and phone number for delivery.');return;}
+
+  var fullAddress=street+', '+suburb+', '+city+', '+province+(postal?', '+postal:'');
+
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({
+        user_id:currentUser.id,
+        user_name:currentUser.name,
+        user_phone:currentUser.phone,
+        user_business:currentUser.business_name,
+        supplier_id:currentOrderSupplier.id,
+        supplier_name:currentOrderSupplier.name,
+        items_description:items,
+        delivery_address:fullAddress,
+        delivery_contact:contactPerson+' · '+contactPhone,
+        delivery_date:schedDate||null,
+        notes:notes||null,
+        estimated_value:0,
+        discount_amount:0,
+        total_value:0,
+        discount_pct:currentOrderSupplier.discount||0,
+        status:'pending',
+        created_at:new Date().toISOString()
+      })
+    });
+    closeOrderModal();
+    showToast('Quote request sent! We\'ll WhatsApp you at '+currentUser.phone+' shortly.');
+  }catch(e){
+    alert('Error submitting request: '+e.message);
+  }
+}
+
+// ---- INFO MODAL ----
+function openInfoModal(sid){
+  var s=suppliers.find(function(x){return x.id===sid;});
+  if(!s)return;
+  document.getElementById('infoModalTitle').textContent=s.name;
+  document.getElementById('infoModalBody').innerHTML=
+    '<div style="text-align:center;font-size:48px;margin-bottom:16px">'+s.emoji+'</div>'
+    +'<div style="background:'+s.color+';border-radius:10px;padding:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">'
+    +'<span style="font-size:13px;color:#374151">Your group discount</span>'
+    +'<span style="font-size:22px;font-weight:800;color:#15803d">'+s.discount+'% OFF</span>'
+    +'</div>'
+    +'<p style="font-size:13px;color:#374151;line-height:1.6;margin-bottom:14px">'+s.desc+'</p>'
+    +'<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;margin-bottom:8px">Products available</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+s.tags.map(function(t){return'<span class="tag">'+t+'</span>';}).join('')+'</div></div>'
+    +'<div style="font-size:13px;color:#6b7280;line-height:1.6"><strong>Turnaround:</strong> '+s.turnaround+'<br>'
+    +'<strong>Minimum order:</strong> R'+s.minOrder.toLocaleString('en-ZA')+'<br>'
+    +'<strong>Payment terms:</strong> '+s.terms+'</div>';
+  document.getElementById('infoModalOrderBtn').setAttribute('data-sid',sid);
+  document.getElementById('infoModalOrderBtn').onclick=function(){
+    document.getElementById('infoModal').style.display='none';
+    openOrderModal(sid);
+  };
+  document.getElementById('infoModal').style.display='flex';
+}
+
+// ---- CART ----
+function updateCartCount(){
+  var count=cart.length;
+  document.getElementById('cartCount').textContent=count;
+  var badge=document.getElementById('cartBadge');
+  if(badge){badge.textContent=count;badge.style.display=count>0?'inline':'none';}
+}
+
+function renderCart(){
+  var el=document.getElementById('cartList');
+  var summary=document.getElementById('cartSummary');
+  if(!el)return;
+  if(!cart.length){
+    el.innerHTML='<div class="cart-empty">Your cart is empty.<br>Browse deals and add items to get started.</div>';
+    summary.style.display='none';
+    return;
+  }
+  var totalOriginal=cart.reduce(function(s,i){return s+(i.estimatedValue||0);},0);
+  var totalSavings=cart.reduce(function(s,i){return s+(i.discountAmount||0);},0);
+  var totalPay=cart.reduce(function(s,i){return s+(i.totalValue||0);},0);
+  el.innerHTML='<div style="background:white;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">'
+    +cart.map(function(item,idx){
+      return '<div class="cart-item" style="padding:14px 16px">'
+        +'<div style="display:flex;align-items:flex-start;gap:12px;flex:1">'
+        +'<div style="font-size:24px">'+item.supplierEmoji+'</div>'
+        +'<div style="flex:1">'
+        +'<div style="font-size:13px;font-weight:700">'+item.supplierName+'</div>'
+        +'<div style="font-size:12px;color:#6b7280;margin-top:2px;line-height:1.4">'+item.items.substring(0,80)+(item.items.length>80?'...':'')+'</div>'
+        +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">'+item.address+'</div>'
+        +'</div>'
+        +'<div style="text-align:right;flex-shrink:0">'
+        +(item.estimatedValue?'<div style="font-size:13px;font-weight:700;color:#15803d">R'+item.totalValue.toLocaleString('en-ZA')+'</div><div style="font-size:11px;color:#15803d">Save R'+item.discountAmount.toLocaleString('en-ZA')+'</div>':'')
+        +'<button data-idx="'+idx+'" onclick="removeFromCart(parseInt(this.dataset.idx))" style="background:none;border:none;color:#dc2626;font-size:11px;cursor:pointer;margin-top:4px">Remove</button>'
+        +'</div></div></div>';
+    }).join('')+'</div>';
+  document.getElementById('cartSubtotal').textContent='R'+Math.round(totalOriginal).toLocaleString('en-ZA');
+  document.getElementById('cartSavings').textContent='-R'+Math.round(totalSavings).toLocaleString('en-ZA');
+  document.getElementById('cartTotal').textContent='R'+Math.round(totalPay).toLocaleString('en-ZA');
+  summary.style.display='block';
+}
+
+function removeFromCart(idx){
+  cart.splice(idx,1);
+  localStorage.setItem('mkt_cart_'+currentUser.id,JSON.stringify(cart));
+  updateCartCount();
+  renderCart();
+}
+
+// ---- PLACE ORDER ----
+async function placeOrder(){
+  if(!cart.length)return;
+  var totalPay=cart.reduce(function(s,i){return s+(i.totalValue||0);},0);
+  if(!confirm('Place order for R'+totalPay.toLocaleString('en-ZA')+'? We will contact you on WhatsApp to confirm and arrange payment.'))return;
+  try{
+    for(var i=0;i<cart.length;i++){
+      var item=cart[i];
+      await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders',{
+        method:'POST',
+        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({
+          user_id:currentUser.id,
+          user_name:currentUser.name,
+          user_phone:currentUser.phone,
+          user_business:currentUser.business_name,
+          supplier_id:item.supplierId,
+          supplier_name:item.supplierName,
+          items_description:item.items,
+          delivery_address:item.address,
+          delivery_date:item.deliveryDate||null,
+          notes:item.notes||null,
+          estimated_value:item.estimatedValue||0,
+          discount_amount:item.discountAmount||0,
+          total_value:item.totalValue||0,
+          discount_pct:item.discount,
+          status:'pending',
+          created_at:new Date().toISOString()
+        })
+      });
+    }
+    // Clear cart
+    cart=[];
+    localStorage.removeItem('mkt_cart_'+currentUser.id);
+    updateCartCount();
+    await loadOrders();
+    showTab('orders');
+    showToast('Order placed! We\'ll WhatsApp you at '+currentUser.phone+' to confirm shortly.');
+  }catch(e){
+    alert('Error placing order: '+e.message+'. Please try again.');
+  }
+}
+
+// ---- ORDERS ----
+async function loadOrders(){
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/marketplace_orders?user_id=eq.'+currentUser.id+'&order=created_at.desc&select=*',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    orders=await r.json();
+    if(!Array.isArray(orders))orders=[];
+  }catch(e){orders=[];}
+}
+
+function renderOrders(){
+  var el=document.getElementById('ordersList');if(!el)return;
+  if(!orders.length){
+    el.innerHTML='<div class="orders-empty">No orders yet.<br>Browse deals and place your first order to start saving.</div>';
+    return;
+  }
+  var statusClass={pending:'status-pending',confirmed:'status-confirmed',delivered:'status-delivered',cancelled:'status-cancelled'};
+  var statusLabel={pending:'Pending confirmation',confirmed:'Confirmed',delivered:'Delivered',cancelled:'Cancelled'};
+  el.innerHTML=orders.map(function(o){
+    return '<div class="order-card">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
+      +'<div>'
+      +'<div style="font-size:14px;font-weight:700">'+o.supplier_name+'</div>'
+      +'<div style="font-size:12px;color:#6b7280;margin-top:2px">'+new Date(o.created_at).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'})+'</div>'
+      +'</div>'
+      +'<span class="order-status '+(statusClass[o.status]||'status-pending')+'">'+(statusLabel[o.status]||o.status)+'</span>'
+      +'</div>'
+      +'<div style="font-size:13px;color:#374151;margin-bottom:10px;line-height:1.5">'+o.items_description+'</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7280;flex-wrap:wrap;gap:8px">'
+      +'<span>📍 '+o.delivery_address+'</span>'
+      +(o.total_value?'<span style="font-weight:700;color:#15803d;font-size:13px">R'+o.total_value.toLocaleString('en-ZA')+' <span style="color:#9ca3af;font-weight:400">(saved R'+o.discount_amount.toLocaleString('en-ZA')+')</span></span>':'')
+      +'</div>'
+      +(o.notes?'<div style="font-size:12px;color:#9ca3af;margin-top:6px;font-style:italic">'+o.notes+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+// ---- TOAST ----
+function toggleSchedule(){
+  var checked=document.getElementById('order-schedule').checked;
+  var row=document.getElementById('schedule-date-row');
+  if(row)row.style.display=checked?'block':'none';
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3500);
+}
+
+// Modal close on overlay click
+document.getElementById('orderModal').addEventListener('click',function(e){if(e.target===this)closeOrderModal();});
+document.getElementById('infoModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+</script>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:24px;height:24px;background:#16a34a;border-radius:4px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <span style="font-size:15px;font-weight:700">Vensource</span>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('authModal').style.display='none'">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:#6b7280;margin-bottom:16px">Free account. Access exclusive supplier discounts — no credit card required.</div>
+      <div class="auth-tabs" style="margin-bottom:20px">
+        <button class="auth-tab active" id="modal-tab-login" onclick="switchModalTab('login')">Sign in</button>
+        <button class="auth-tab" id="modal-tab-signup" onclick="switchModalTab('signup')">Create account</button>
+      </div>
+      <div id="modalAuthError" class="auth-error"></div>
+
+      <!-- Modal Login -->
+      <div id="modalLoginForm">
+        <div class="form-row"><label class="form-label">Email</label><input class="form-input" id="m-loginEmail" placeholder="you@business.co.za" /></div>
+        <div class="form-row"><label class="form-label">Password</label><input class="form-input" type="password" id="m-loginPassword" placeholder="Your password" onkeydown="if(event.key==='Enter')doModalLogin()" /></div>
+        <button class="btn-primary" onclick="doModalLogin()">Sign in →</button>
+      </div>
+
+      <!-- Modal Signup -->
+      <div id="modalSignupForm" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-row"><label class="form-label">Full name *</label><input class="form-input" id="m-su-name" placeholder="John Smith" /></div>
+          <div class="form-row"><label class="form-label">Business name *</label><input class="form-input" id="m-su-business" placeholder="Smith Plumbing" /></div>
+        </div>
+        <div class="form-row"><label class="form-label">WhatsApp number * <span style="color:#9ca3af;font-weight:400">(for order updates)</span></label><input class="form-input" id="m-su-phone" placeholder="+27 82 000 0000" type="tel" /></div>
+        <div class="form-row"><label class="form-label">Industry</label>
+          <select class="form-input" id="m-su-industry">
+            <option value="">— Select —</option>
+            <option>Plumbing</option><option>Electrical</option><option>Construction</option>
+            <option>Retail</option><option>Transport & Logistics</option><option>Food & Hospitality</option>
+            <option>Manufacturing</option><option>Professional Services</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="form-label">Email *</label><input class="form-input" type="email" id="m-su-email" placeholder="you@business.co.za" /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-row"><label class="form-label">Password *</label><input class="form-input" type="password" id="m-su-pass" placeholder="Min. 6 characters" /></div>
+          <div class="form-row"><label class="form-label">Confirm *</label><input class="form-input" type="password" id="m-su-pass2" placeholder="Repeat" /></div>
+        </div>
+        <button class="btn-primary" onclick="doModalSignup()">Create free account →</button>
+        <div style="font-size:11px;color:#9ca3af;text-align:center;margin-top:8px">Free forever · No credit card required</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
