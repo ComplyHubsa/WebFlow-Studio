@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Work from '@/components/Work'
+import WorkShowcase from '@/components/WorkShowcase'
 import ContactCTA from '@/components/ContactCTA'
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default function WorkPage() {
           </p>
         </div>
       </div>
-      <Work hideHeader />
+      <WorkShowcase />
       <ContactCTA />
     </>
   )
